@@ -28,3 +28,14 @@ proguard/
 
 # Mac OS X
 .DS_Store
+
+# IDEA
+.idea/
+
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
