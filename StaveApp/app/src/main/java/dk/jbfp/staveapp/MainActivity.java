@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             private void start(Context context) {
-                mp = MediaPlayer.create(context, R.raw.wilhelm_scream);
+                mp = MediaPlayer.create(context, R.raw.word_ko);
                 mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer _) {
