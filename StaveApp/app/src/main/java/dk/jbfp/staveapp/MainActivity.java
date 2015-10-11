@@ -1,6 +1,9 @@
 package dk.jbfp.staveapp;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -9,9 +12,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,45 +38,71 @@ public class MainActivity extends AppCompatActivity {
     private NumberPicker[] numberPickers;
     private boolean isPlayingCombinedSounds;
 
+    private String[] words;
+    private int wordIndex;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final NumberPicker numberPicker1 = (NumberPicker) findViewById(R.id.NumberPicker1);
-        final NumberPicker numberPicker2 = (NumberPicker) findViewById(R.id.NumberPicker2);
+        words = new String[] { "ko", "by", "bo" }; // TODO: From intent.
+        wordIndex = 0;
+        int wordLength = words[wordIndex].length();
 
-        configureNumberPickers(numberPicker1);
-        configureNumberPickers(numberPicker2);
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.NumberPickerLayout);
+        layout.removeAllViews();
+        numberPickers = new NumberPicker[wordLength];
 
-        numberPickers = new NumberPicker[2];
-        numberPickers[0] = numberPicker1;
-        numberPickers[1] = numberPicker2;
+        for (int i = 0; i < wordLength; i++) {
+            NumberPicker numberPicker = new NumberPicker(getApplicationContext());
+            numberPicker.setId(View.generateViewId());
+            configureNumberPickers(numberPicker);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+            if (i > 0) {
+                lp.addRule(RelativeLayout.RIGHT_OF, numberPickers[i - 1].getId());
+            }
+
+            numberPickers[i] = numberPicker;
+            layout.addView(numberPicker, lp);
+        }
 
         final Button svarButton = (Button) findViewById(R.id.SvarButton);
         svarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                String left = Alphabet[numberPicker1.getValue()];
-                String right = Alphabet[numberPicker2.getValue()];
-                String answer = left + right;
+                final Button self = (Button) v;
+                self.setEnabled(false);
 
-                List<Integer> soundIds = new ArrayList<Integer>();
-                soundIds.add(Sounds[numberPicker1.getValue()]);
-                soundIds.add(Sounds[numberPicker2.getValue()]);
+                String answer = "";
+                List<Integer> soundIds = new ArrayList<>();
+
+                for (int i = 0; i < numberPickers.length; i++) {
+                    answer += Alphabet[numberPickers[i].getValue()];
+                    soundIds.add(Sounds[numberPickers[i].getValue()]);
+                }
+
                 soundIds.add(R.raw.word_ko);
 
-                if (answer.equalsIgnoreCase("KO")) {
+                final Toast toast;
+
+                if (answer.equalsIgnoreCase(words[wordIndex])) {
                     soundIds.add(R.raw.yay_008);
+                    toast = Toast.makeText(v.getContext(), "Godt arbejde!", Toast.LENGTH_LONG);
                 } else {
                     soundIds.add(R.raw.doh_06);
                     soundIds.add(R.raw.doh_09);
+                    toast = Toast.makeText(v.getContext(), "Prøv igen!", Toast.LENGTH_LONG);
                 }
 
                 playChain(v.getContext(), soundIds, new Callback() {
                     @Override
                     public void execute() {
-
+                        self.setEnabled(true);
+                        toast.show();
                     }
                 });
             }
@@ -114,6 +147,13 @@ public class MainActivity extends AppCompatActivity {
                 lytButton.setImageDrawable(playIcon);
             }
         });
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                lytButton.callOnClick();
+            }
+        }, 1500);
     }
 
     private void configureNumberPickers(final NumberPicker numberPicker) {
@@ -147,6 +187,42 @@ public class MainActivity extends AppCompatActivity {
                 }, 1500);
             }
         });
+
+        // Text color.
+        final int count = numberPicker.getChildCount();
+        for(int i = 0; i < count; i++) {
+            View child = numberPicker.getChildAt(i);
+
+            if (child instanceof EditText) {
+                // Set text colors.
+                try {
+                    Field selectorWheelPaintField = numberPicker.getClass()
+                            .getDeclaredField("mSelectorWheelPaint");
+                    selectorWheelPaintField.setAccessible(true);
+                    ((Paint) selectorWheelPaintField.get(numberPicker)).setColor(Color.BLACK);
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+                // Set divider color.
+                try {
+                    Field selectionDividerField = numberPicker.getClass()
+                            .getDeclaredField("mSelectionDivider");
+                    selectionDividerField.setAccessible(true);
+                    ((Drawable) selectionDividerField.get(numberPicker)).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC);
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+                // Set text color.
+                ((EditText) child).setTextColor(Color.BLACK);
+                numberPicker.invalidate();
+            }
+        }
     }
 
     private void playCombinedSounds(final Context context, final int index) {
