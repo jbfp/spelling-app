@@ -3,9 +3,12 @@ package dk.jbfp.staveapp.level;
 public class LevelPresenter {
     private final Word[] words;
     private int wordIndex;
+    private LevelState state;
     private LevelView view;
 
     public LevelPresenter() {
+        this.state = LevelState.Full;
+        this.wordIndex = 0;
         this.words = new Word[] {
                 new Word("da"),
                 new Word("en"),
@@ -15,27 +18,23 @@ public class LevelPresenter {
 
     public void setView(LevelView view) {
         this.view = view;
-        this.view.onNextWord(null, words[wordIndex]);
+        this.onNext();
     }
 
-    public int getLength() {
-        return words.length;
+    public void onAnswerChanged() {
+        this.view.playAnswerSound();
     }
 
-    public int getIndex() {
-        return wordIndex;
+    public void onPlayClicked() {
+        this.view.playWordSound(0);
     }
 
-    public Word getCurrentWord() {
-        return words[wordIndex];
+    public void onStopClicked() {
+        this.view.stopWordSound();
     }
 
-    public void answer(String answer) {
-        if (wordIndex >= words.length) {
-            return;
-        }
-
-        Word word = words[wordIndex++];
+    public void onAnswerClicked(String answer) throws Exception {
+        Word word = words[wordIndex];
 
         if (answer.equalsIgnoreCase(word.toString())) {
             word.markAsCorrect();
@@ -43,27 +42,103 @@ public class LevelPresenter {
             word.markAsIncorrect();
         }
 
-        if (wordIndex < words.length) {
-            view.onNextWord(word, words[wordIndex]);
+        this.view.addWord(word);
+
+        if (this.state == LevelState.Full) {
+            handleFull();
+        } else if (this.state == LevelState.Repetition) {
+            handleRepetition();
+        }
+    }
+
+    private void handleFull() throws Exception {
+        if (this.wordIndex < this.words.length - 1) {
+            this.wordIndex = this.wordIndex + 1;
+            this.onNext();
         } else {
             boolean allCorrect = true;
 
-            for (Word w: words) {
-                if (w.getStatus() != Word.WordStatus.Correct) {
+            for (Word word: this.words) {
+                if (word.getStatus() == Word.WordStatus.Incorrect) {
                     allCorrect = false;
                     break;
                 }
             }
 
-            view.onCompleted(allCorrect);
-
             if (allCorrect) {
-                // TODO: Navigate to level screen.
-                // TODO: Mark level as completed.
+                // We're done here!
+                this.transitionToEnd();
             } else {
-                // TODO: Do all those words that are incorrect.
-                // TODO: Start over.
+                this.transitionToRepetition();
             }
         }
+    }
+
+    private void transitionToEnd() throws Exception {
+        this.state = LevelState.End;
+        throw new Exception("WE DONE HERE");
+    }
+
+    private void transitionToRepetition() {
+        this.state = LevelState.Repetition;
+        this.view.clearList();
+
+        for (int i = 0; i < this.words.length; i++) {
+            if (this.words[i].getStatus() == Word.WordStatus.Incorrect) {
+                this.wordIndex = i;
+                break;
+            }
+        }
+
+        this.onNext();
+    }
+
+    private void handleRepetition() {
+        if (this.wordIndex < this.words.length - 1) {
+            for (int i = this.wordIndex + 1; i < this.words.length; i++) {
+                if (this.words[i].getStatus() == Word.WordStatus.Incorrect) {
+                    this.wordIndex = i;
+                    this.onNext();
+                    return;
+                }
+            }
+
+            this.wordIndex = this.words.length;
+            this.handleRepetition();
+        } else {
+            boolean allCorrect = true;
+
+            for (Word word: this.words) {
+                if (word.getStatus() == Word.WordStatus.Incorrect) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+
+            if (allCorrect) {
+                this.transitionToFull();
+            } else {
+                this.transitionToRepetition();
+            }
+        }
+    }
+
+    private void transitionToFull() {
+        this.state = LevelState.Full;
+        this.view.clearList();
+        this.wordIndex = 0;
+        this.onNext();
+    }
+
+    private void onNext() {
+        this.view.onNextWord(words[wordIndex]);
+        this.view.setLevel(wordIndex + 1, words.length);
+        this.view.playWordSound(1000);
+    }
+
+    private enum LevelState {
+        Full,
+        Repetition,
+        End
     }
 }

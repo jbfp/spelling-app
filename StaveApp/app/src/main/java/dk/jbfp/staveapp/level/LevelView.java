@@ -1,6 +1,14 @@
 package dk.jbfp.staveapp.level;
 
 public interface LevelView {
-    void onNextWord(Word previous, Word current);
+    void onNextWord(Word next);
     void onCompleted(boolean allCorrect);
+
+    void addWord(Word word);
+    void clearList();
+
+    void setLevel(int level, int total);
+    void playWordSound(int delay);
+    void stopWordSound();
+    void playAnswerSound();
 }

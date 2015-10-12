@@ -14,6 +14,7 @@ import android.util.ArrayMap;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
 
+import dk.jbfp.staveapp.Callback;
 import dk.jbfp.staveapp.R;
 
 public class LevelActivity extends AppCompatActivity implements LevelView {
@@ -97,10 +99,12 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
 
     private NumberPicker[] numberPickers;
     private boolean isPlayingCombinedSounds;
+    private boolean cancelAnswerSound;
 
     private MediaPlayer lytButtonMediaPlayer;
     private Drawable playIcon;
     private Drawable stopIcon;
+    private int currentWordSoundId;
 
     private LevelPresenter presenter;
 
@@ -126,7 +130,7 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
             @Override
             public void onClick(View v) {
                 if (isPlayingCombinedSounds == false) {
-                    playCombinedSounds(v.getContext(), 0);
+                    presenter.onAnswerChanged();
                 }
             }
         });
@@ -140,11 +144,11 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
                     public void run() {
                         if (picker.getValue() == newVal) {
                             if (isPlayingCombinedSounds == false) {
-                                playCombinedSounds(picker.getContext(), 0);
+                                presenter.onAnswerChanged();
                             }
                         }
                     }
-                }, 1500);
+                }, 1000);
             }
         });
 
@@ -185,7 +189,82 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
         }
     }
 
+    @Override
+    public void onNextWord(Word next) {
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.NumberPickerLayout);
+        layout.removeAllViews();
+
+        int wordLength = next.toString().length();
+        numberPickers = new NumberPicker[wordLength];
+
+        for (int i = 0; i < wordLength; i++) {
+            NumberPicker numberPicker = new NumberPicker(this);
+            numberPicker.setId(View.generateViewId());
+            configureNumberPickers(numberPicker);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+            if (i > 0) {
+                lp.addRule(RelativeLayout.RIGHT_OF, numberPickers[i - 1].getId());
+            }
+
+            numberPickers[i] = numberPicker;
+            layout.addView(numberPicker, lp);
+        }
+
+        currentWordSoundId = wordSounds.get(next.toString());
+    }
+
+    @Override
+    public void onCompleted(boolean allCorrect) {
+        int soundId;
+
+        if (allCorrect) {
+            soundId = R.raw.yay_009;
+        } else {
+            soundId = R.raw.doh_09;
+        }
+
+        playSound(this, soundId, null);
+    }
+
+    @Override
+    public void addWord(Word word) {
+        LinearLayout wordsLinearLayout = (LinearLayout) findViewById(R.id.WordsLinearLayout);
+        TextView wordTextView = new TextView(this);
+        wordTextView.setText(word.toString());
+
+        if (word.getStatus() == Word.WordStatus.Incorrect) {
+            wordTextView.setTextColor(Color.RED);
+        }
+
+        wordsLinearLayout.addView(wordTextView);
+    }
+
+    @Override
+    public void clearList() {
+        LinearLayout wordsLinearLayout = (LinearLayout) findViewById(R.id.WordsLinearLayout);
+        wordsLinearLayout.removeAllViews();
+    }
+
+    @Override
+    public void setLevel(int level, int total) {
+        TextView levelTextView = (TextView) findViewById(R.id.LevelTextView);
+        levelTextView.setText(level + "/" + total);
+    }
+
+    @Override
+    public void playAnswerSound() {
+        playCombinedSounds(this, 0);
+    }
+
     private void playCombinedSounds(final Context context, final int index) {
+        if (cancelAnswerSound) {
+            cancelAnswerSound = false;
+            return;
+        }
+
         if (index >= numberPickers.length) {
             isPlayingCombinedSounds = false;
         } else {
@@ -211,61 +290,61 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
         }
     }
 
-    @Override
-    public void onNextWord(Word previous, Word current) {
-        // TODO: Update level text view.
-        TextView levelTextView = (TextView) findViewById(R.id.LevelTextView);
-        levelTextView.setText((presenter.getIndex() + 1) + "/" + presenter.getLength());
+    public void onSvarButtonClick(View view) throws Exception {
+        StringBuilder answer = new StringBuilder();
 
-        // TODO: Add to list of completed words.
-        // TODO: Reset spinners.
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.NumberPickerLayout);
-        layout.removeAllViews();
-
-        int wordLength = current.toString().length();
-        numberPickers = new NumberPicker[wordLength];
-
-        for (int i = 0; i < wordLength; i++) {
-            NumberPicker numberPicker = new NumberPicker(getApplicationContext());
-            numberPicker.setId(View.generateViewId());
-            configureNumberPickers(numberPicker);
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT);
-
-            if (i > 0) {
-                lp.addRule(RelativeLayout.RIGHT_OF, numberPickers[i - 1].getId());
-            }
-
-            numberPickers[i] = numberPicker;
-            layout.addView(numberPicker, lp);
+        for (int i = 0; i < numberPickers.length; i++) {
+            answer.append(Alphabet[numberPickers[i].getValue()]);
         }
 
-        // TODO: Play sound clip.
+        this.cancelAnswerSound = true;
+        presenter.onAnswerClicked(answer.toString());
+    }
+
+    @Override
+    public void playWordSound(int delay) {
         final ImageButton lytButton = (ImageButton) findViewById(R.id.LytButton);
+        lytButtonMediaPlayer = MediaPlayer.create(lytButton.getContext(), currentWordSoundId);
+        lytButtonMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer _) {
+                stopWordSound();
+            }
+        });
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                lytButton.callOnClick();
+                if (lytButtonMediaPlayer != null) {
+                    lytButtonMediaPlayer.start();
+                    lytButton.setImageDrawable(stopIcon);
+                }
             }
-        }, 1000);
-
+        }, delay);
     }
 
     @Override
-    public void onCompleted(boolean allCorrect) {
-        int soundId;
+    public void stopWordSound() {
+        final ImageButton lytButton = (ImageButton) findViewById(R.id.LytButton);
 
-        if (allCorrect) {
-            soundId = R.raw.yay_009;
-        } else {
-            soundId = R.raw.doh_09;
+        if (lytButtonMediaPlayer != null) {
+            lytButtonMediaPlayer.stop();
+            lytButtonMediaPlayer.release();
+            lytButtonMediaPlayer = null;
         }
 
-        playSound(getApplicationContext(), soundId);
+        lytButton.setImageDrawable(playIcon);
     }
 
-    private void playSound(Context context, int resId){
+    public void onLytButtonClick(View view) {
+        if (lytButtonMediaPlayer == null) {
+            this.presenter.onPlayClicked();
+        } else {
+            this.presenter.onStopClicked();
+        }
+    }
+
+    private static void playSound(final Context context, final int resId, final Callback onCompleted) {
         MediaPlayer mp = MediaPlayer.create(context, resId);
 
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -273,6 +352,10 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
             public void onCompletion(MediaPlayer mp) {
                 mp.stop();
                 mp.release();
+
+                if (onCompleted != null) {
+                    onCompleted.execute();
+                }
             }
         });
 
@@ -282,44 +365,5 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
                 mp.start();
             }
         });
-    }
-
-    public void onSvarButtonClick(View view) {
-        StringBuilder answer = new StringBuilder();
-
-        for (int i = 0; i < numberPickers.length; i++) {
-            answer.append(numberPickers[i].getValue());
-        }
-
-        presenter.answer(answer.toString());
-    }
-
-    public void onLytButtonClick(View view) {
-        final ImageButton self = (ImageButton) view;
-
-        self.setEnabled(false);
-
-        if (lytButtonMediaPlayer == null) {
-            lytButtonMediaPlayer = MediaPlayer.create(self.getContext(), wordSounds.get(presenter.getCurrentWord().toString()));
-            lytButtonMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer _) {
-                    stopLytButtonMediaPlayer(self);
-                }
-            });
-            lytButtonMediaPlayer.start();
-            self.setImageDrawable(stopIcon);
-        } else {
-            stopLytButtonMediaPlayer(self);
-        }
-
-        self.setEnabled(true);
-    }
-
-    private void stopLytButtonMediaPlayer(ImageButton lytButton) {
-        lytButtonMediaPlayer.stop();
-        lytButtonMediaPlayer.release();
-        lytButtonMediaPlayer = null;
-        lytButton.setImageDrawable(playIcon);
     }
 }
