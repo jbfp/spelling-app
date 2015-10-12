@@ -15,6 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:id="@+id/LevelTextView"
         style="@style/Base.TextAppearance.AppCompat.Subhead"
         android:text="1/6"/>
 
@@ -30,6 +31,7 @@
             android:layout_height="wrap_content"
             android:background="?android:selectableItemBackground"
             android:layout_centerHorizontal="true"
+            android:onClick="onLytButtonClick"
             android:src="@drawable/ic_play_circle_outline_black_48dp" />
 
     </LinearLayout>
@@ -55,6 +57,7 @@
                 android:id="@+id/SvarButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:onClick="onSvarButtonClick"
                 android:text="Svar"/>
         </LinearLayout>
 
