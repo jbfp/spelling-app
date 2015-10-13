@@ -23,4 +23,8 @@ public class LoginPresenter {
     public void onUserClicked(User user) {
         this.view.navigateToStartActivity(user.id);
     }
+
+    public void onResume() {
+        this.view.showUsers(this.users.getAllUsers());
+    }
 }

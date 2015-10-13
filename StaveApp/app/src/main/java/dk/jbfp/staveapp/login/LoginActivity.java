@@ -2,6 +2,7 @@ package dk.jbfp.staveapp.login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,7 @@ import dk.jbfp.staveapp.R;
 import dk.jbfp.staveapp.User;
 import dk.jbfp.staveapp.UserRepositoryImpl;
 import dk.jbfp.staveapp.level.LevelActivity;
+import dk.jbfp.staveapp.register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity implements LoginView {
     private UserAdapter userAdapter;
@@ -45,6 +48,12 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
         this.presenter = new LoginPresenter(new UserRepositoryImpl());
         this.presenter.setView(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.presenter.onResume();
     }
 
     @Override
@@ -72,7 +81,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
     @Override
     public void navigateToRegisterActivity() {
-        Intent intent = new Intent(this, LevelActivity.class);
+        Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
 
@@ -122,11 +131,17 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
                 view = layoutInflater.inflate(R.layout.layout_user_item, null);
             }
 
-            ImageView profilePictureView = (ImageView) view.findViewById(R.id.user_picture);
-            profilePictureView.setImageResource(android.R.drawable.ic_delete);
+            User user = this.users.get(position);
+
+            if (user.photo != null) {
+                ByteArrayInputStream stream = new ByteArrayInputStream(user.photo);
+                Drawable drawable = Drawable.createFromStream(stream, null);
+                ImageView profilePictureView = (ImageView) view.findViewById(R.id.user_picture);
+                profilePictureView.setImageDrawable(drawable);
+            }
 
             TextView userNameView = (TextView) view.findViewById(R.id.user_name_view);
-            userNameView.setText(this.users.get(position).name);
+            userNameView.setText(user.name);
 
             return view;
         }

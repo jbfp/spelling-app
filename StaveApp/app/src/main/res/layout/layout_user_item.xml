@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/user_picture"
-        android:src="@drawable/ic_play_circle_outline_black_48dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_face_black_48dp"
         android:layout_width="96dp"
         android:layout_height="128dp" />
 
     <TextView
         android:id="@+id/user_name_view"
-        android:layout_below="@id/user_picture"
         style="@style/Base.TextAppearance.AppCompat.Subhead"
         android:gravity="center_horizontal"
+        android:textAlignment="center"
         android:text="Jakob"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
-</RelativeLayout>
+</LinearLayout>
