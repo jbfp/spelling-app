@@ -217,16 +217,8 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
     }
 
     @Override
-    public void onCompleted(boolean allCorrect) {
-        int soundId;
-
-        if (allCorrect) {
-            soundId = R.raw.yay_009;
-        } else {
-            soundId = R.raw.doh_09;
-        }
-
-        playSound(this, soundId, null);
+    public void onCompleted() {
+        playSound(this, R.raw.yay_009, null);
     }
 
     @Override

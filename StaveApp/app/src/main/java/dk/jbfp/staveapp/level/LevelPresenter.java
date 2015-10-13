@@ -76,7 +76,7 @@ public class LevelPresenter {
 
     private void transitionToEnd() throws Exception {
         this.state = LevelState.End;
-        throw new Exception("WE DONE HERE");
+        this.view.onCompleted();
     }
 
     private void transitionToRepetition() {
