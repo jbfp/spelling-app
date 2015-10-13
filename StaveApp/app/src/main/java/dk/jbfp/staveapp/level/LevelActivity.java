@@ -27,6 +27,8 @@ import dk.jbfp.staveapp.Callback;
 import dk.jbfp.staveapp.R;
 
 public class LevelActivity extends AppCompatActivity implements LevelView {
+    public static final String USER_ID_KEY = "dk.jbfp.staveapp.USER_ID";
+
     private static final String[] Alphabet = {
             "A", "B","C","D","E","F","G", "H", "I", "J", "K", "L", "M", "N", "O",
             "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "Æ", "Ø", "Å"
