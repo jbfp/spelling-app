@@ -7,28 +7,35 @@ public class Word {
         Correct
     }
 
-    private final String word;
-    private WordStatus status;
+    private String word;
+    private String answer;
 
     public Word(String word) {
         this.word = word;
-        this.status = WordStatus.Incomplete;
+        this.answer = null;
     }
 
     public WordStatus getStatus() {
-        return this.status;
+        if (this.answer == null) {
+            return WordStatus.Incomplete;
+        }
+
+        if (this.word.equalsIgnoreCase(this.answer)) {
+            return WordStatus.Correct;
+        } else {
+            return WordStatus.Incorrect;
+        }
     }
 
-    @Override
-    public String toString() {
-        return word;
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 
-    public void markAsIncorrect() {
-        this.status = WordStatus.Incorrect;
+    public String getWord() {
+        return this.word;
     }
 
-    public void markAsCorrect() {
-        this.status = WordStatus.Correct;
+    public String getAnswer() {
+        return this.answer;
     }
 }

@@ -196,7 +196,8 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.NumberPickerLayout);
         layout.removeAllViews();
 
-        int wordLength = next.toString().length();
+        String word = next.getWord();
+        int wordLength = word.length();
         numberPickers = new NumberPicker[wordLength];
 
         for (int i = 0; i < wordLength; i++) {
@@ -215,7 +216,7 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
             layout.addView(numberPicker, lp);
         }
 
-        currentWordSoundId = wordSounds.get(next.toString());
+        currentWordSoundId = wordSounds.get(word);
     }
 
     @Override
@@ -227,7 +228,7 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
     public void addWord(Word word) {
         LinearLayout wordsLinearLayout = (LinearLayout) findViewById(R.id.WordsLinearLayout);
         TextView wordTextView = new TextView(this);
-        wordTextView.setText(word.toString());
+        wordTextView.setText(word.getAnswer());
 
         if (word.getStatus() == Word.WordStatus.Incorrect) {
             wordTextView.setTextColor(Color.RED);

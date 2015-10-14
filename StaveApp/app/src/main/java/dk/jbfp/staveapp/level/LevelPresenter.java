@@ -35,13 +35,7 @@ public class LevelPresenter {
 
     public void onAnswerClicked(String answer) throws Exception {
         Word word = words[wordIndex];
-
-        if (answer.equalsIgnoreCase(word.toString())) {
-            word.markAsCorrect();
-        } else {
-            word.markAsIncorrect();
-        }
-
+        word.setAnswer(answer);
         this.view.addWord(word);
 
         if (this.state == LevelState.Full) {
