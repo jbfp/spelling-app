@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="dk.jbfp.staveapp" >
 
     <uses-sdk android:minSdkVersion="21" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.AppCompat.Light" >
-        <activity
-            android:name=".level.LevelActivity"
-            android:label="@string/app_name">
-        </activity>
+        android:theme="@android:style/Theme.Material.Light" >
         <activity
             android:name=".login.LoginActivity"
-            android:label="@string/title_activity_login">
+            android:label="@string/title_activity_login" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +32,18 @@
         </activity>
         <activity
             android:name=".register.RegisterActivity"
-            android:label="Ny bruger">
+            android:label="@string/title_activity_register"
+            android:parentActivityName=".login.LoginActivity">
+        </activity>
+        <activity
+            android:name=".steps.StepsActivity"
+            android:label="@string/title_activity_steps"
+            android:parentActivityName=".login.LoginActivity">
+        </activity>
+        <activity
+            android:name=".level.LevelActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".steps.StepsActivity">
         </activity>
     </application>
 

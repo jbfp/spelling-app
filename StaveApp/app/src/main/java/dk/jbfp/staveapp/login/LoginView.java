@@ -7,5 +7,5 @@ import dk.jbfp.staveapp.User;
 public interface LoginView {
     void showUsers(List<User> users);
     void navigateToRegisterActivity();
-    void navigateToStartActivity(int userId, String[] words);
+    void navigateToStepsActivity(int userId, String[] words);
 }

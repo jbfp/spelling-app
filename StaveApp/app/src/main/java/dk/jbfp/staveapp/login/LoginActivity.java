@@ -1,10 +1,10 @@
 package dk.jbfp.staveapp.login;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,10 +24,10 @@ import java.util.List;
 import dk.jbfp.staveapp.R;
 import dk.jbfp.staveapp.User;
 import dk.jbfp.staveapp.data.Database;
-import dk.jbfp.staveapp.level.LevelActivity;
 import dk.jbfp.staveapp.register.RegisterActivity;
+import dk.jbfp.staveapp.steps.StepsActivity;
 
-public class LoginActivity extends AppCompatActivity implements LoginView {
+public class LoginActivity extends Activity implements LoginView {
     private UserAdapter userAdapter;
     private LoginPresenter presenter;
 
@@ -86,10 +86,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     }
 
     @Override
-    public void navigateToStartActivity(int userId, String[] words) {
-        Intent intent = new Intent(this, LevelActivity.class);
-        intent.putExtra(LevelActivity.USER_ID_KEY, userId);
-        intent.putExtra(LevelActivity.WORDS_KEY, words);
+    public void navigateToStepsActivity(int userId, String[] words) {
+        Intent intent = new Intent(this, StepsActivity.class);
+        intent.putExtra(StepsActivity.USER_ID_KEY, userId);
         startActivity(intent);
     }
 

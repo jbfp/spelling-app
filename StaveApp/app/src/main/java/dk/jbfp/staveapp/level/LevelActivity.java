@@ -1,5 +1,6 @@
 package dk.jbfp.staveapp.level;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,7 +11,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.ArrayMap;
 import android.view.View;
 import android.widget.EditText;
@@ -27,7 +27,7 @@ import java.util.Map;
 import dk.jbfp.staveapp.Callback;
 import dk.jbfp.staveapp.R;
 
-public class LevelActivity extends AppCompatActivity implements LevelView {
+public class LevelActivity extends Activity implements LevelView {
     public static final String USER_ID_KEY = "dk.jbfp.staveapp.USER_ID";
     public static final String WORDS_KEY = "dk.jbfp.staveapp.WORDS";
 
@@ -116,6 +116,7 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         this.playIcon = ContextCompat.getDrawable(this, R.drawable.ic_play_circle_outline_black_48dp);
         this.stopIcon = ContextCompat.getDrawable(this, R.drawable.ic_stop_black_48dp);

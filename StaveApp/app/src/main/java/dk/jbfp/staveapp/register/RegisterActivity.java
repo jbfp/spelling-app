@@ -1,5 +1,6 @@
 package dk.jbfp.staveapp.register;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -8,7 +9,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -24,7 +24,7 @@ import java.util.Date;
 import dk.jbfp.staveapp.R;
 import dk.jbfp.staveapp.data.Database;
 
-public class RegisterActivity extends AppCompatActivity implements RegisterView {
+public class RegisterActivity extends Activity implements RegisterView {
     private static final int CAMERA_REQUEST_CODE = 1;
 
     private EditText nameEditText;
@@ -38,6 +38,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         this.nameEditText = (EditText) findViewById(R.id.name_edit_text);
         this.photoImageButton = (ImageButton) findViewById(R.id.photo_image_button);
