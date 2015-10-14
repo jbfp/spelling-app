@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <TableRow>
+        <ImageView
+            android:id="@+id/step_item_image"
+            android:tint="@color/accent"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_done_black_48dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="4dp" />
+
+        <TextView
+            android:text="Test test test t wfwjeof wioef woeifjwoeifj woeifj woeifj woeif we wefwefi wefest"
+            android:id="@+id/step_item_text"
+            android:layout_width="fill_parent"
+            style="@style/AppTheme"
+            android:paddingRight="12dp"
+            android:gravity="center_vertical"
+            android:layout_height="50dp" />
+    </TableRow>
+</TableLayout>
