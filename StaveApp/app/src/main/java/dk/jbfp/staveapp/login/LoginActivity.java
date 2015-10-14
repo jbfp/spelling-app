@@ -23,7 +23,7 @@ import java.util.List;
 
 import dk.jbfp.staveapp.R;
 import dk.jbfp.staveapp.User;
-import dk.jbfp.staveapp.UserRepositoryImpl;
+import dk.jbfp.staveapp.data.Database;
 import dk.jbfp.staveapp.level.LevelActivity;
 import dk.jbfp.staveapp.register.RegisterActivity;
 
@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
             }
         });
 
-        this.presenter = new LoginPresenter(new UserRepositoryImpl());
+        this.presenter = new LoginPresenter(new Database(this));
         this.presenter.setView(this);
     }
 

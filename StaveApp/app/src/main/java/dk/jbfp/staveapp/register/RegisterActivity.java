@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import dk.jbfp.staveapp.R;
-import dk.jbfp.staveapp.UserRepositoryImpl;
+import dk.jbfp.staveapp.data.Database;
 
 public class RegisterActivity extends AppCompatActivity implements RegisterView {
     private static final int CAMERA_REQUEST_CODE = 1;
@@ -31,7 +31,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        this.presenter = new RegisterPresenter(new UserRepositoryImpl());
+        this.presenter = new RegisterPresenter(new Database(this));
         this.presenter.setView(this);
     }
 
