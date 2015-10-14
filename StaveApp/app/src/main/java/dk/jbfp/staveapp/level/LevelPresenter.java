@@ -6,14 +6,14 @@ public class LevelPresenter {
     private LevelState state;
     private LevelView view;
 
-    public LevelPresenter() {
+    public LevelPresenter(String[] words) {
         this.state = LevelState.Full;
         this.wordIndex = 0;
-        this.words = new Word[] {
-                new Word("da"),
-                new Word("en"),
-                new Word("to")
-        };
+        this.words = new Word[words.length];
+
+        for (int i = 0; i < words.length; i++) {
+            this.words[i] = new Word(words[i]);
+        }
     }
 
     public void setView(LevelView view) {

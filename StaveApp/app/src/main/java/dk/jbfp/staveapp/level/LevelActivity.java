@@ -1,6 +1,7 @@
 package dk.jbfp.staveapp.level;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -28,6 +29,7 @@ import dk.jbfp.staveapp.R;
 
 public class LevelActivity extends AppCompatActivity implements LevelView {
     public static final String USER_ID_KEY = "dk.jbfp.staveapp.USER_ID";
+    public static final String WORDS_KEY = "dk.jbfp.staveapp.WORDS";
 
     private static final String[] Alphabet = {
             "A", "B","C","D","E","F","G", "H", "I", "J", "K", "L", "M", "N", "O",
@@ -115,11 +117,14 @@ public class LevelActivity extends AppCompatActivity implements LevelView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        playIcon = ContextCompat.getDrawable(this, R.drawable.ic_play_circle_outline_black_48dp);
-        stopIcon = ContextCompat.getDrawable(this, R.drawable.ic_stop_black_48dp);
+        this.playIcon = ContextCompat.getDrawable(this, R.drawable.ic_play_circle_outline_black_48dp);
+        this.stopIcon = ContextCompat.getDrawable(this, R.drawable.ic_stop_black_48dp);
 
-        presenter = new LevelPresenter();
-        presenter.setView(this);
+        Intent intent = getIntent();
+        String[] words = intent.getStringArrayExtra(WORDS_KEY);
+
+        this.presenter = new LevelPresenter(words);
+        this.presenter.setView(this);
     }
 
     private void configureNumberPickers(final NumberPicker numberPicker) {

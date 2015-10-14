@@ -21,7 +21,13 @@ public class LoginPresenter {
     }
 
     public void onUserClicked(User user) {
-        this.view.navigateToStartActivity(user.id);
+        String[] words = {
+                "da",
+                "bo",
+                "by"
+        };
+
+        this.view.navigateToStartActivity(user.id, words);
     }
 
     public void onResume() {
