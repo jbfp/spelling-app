@@ -23,10 +23,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void addUser(String name, byte[] photo) {
+    public void addUser(String name, int seed, byte[] photo) {
         User user = new User();
         user.id = users.size() + 1;
         user.name = name;
+        user.seed = seed;
         user.photo = photo;
         users.add(user);
     }

@@ -2,9 +2,13 @@ package dk.jbfp.staveapp.register;
 
 import android.graphics.Bitmap;
 
+import java.util.Random;
+
 import dk.jbfp.staveapp.UserRepository;
 
 public class RegisterPresenter {
+    private static final Random random = new Random();
+
     private UserRepository users;
     private RegisterView view;
 
@@ -25,7 +29,8 @@ public class RegisterPresenter {
     }
 
     public void save(String name, byte[] photo) {
-        this.users.addUser(name, photo);
+        int seed = random.nextInt();
+        this.users.addUser(name, seed, photo);
         this.view.returnToLoginActivity();
     }
 }
