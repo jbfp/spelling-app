@@ -22,10 +22,12 @@
         android:id="@+id/photo_image_button"
         android:layout_width="fill_parent"
         android:layout_height="320dp"
-        android:src="@drawable/ic_photo_camera_black_48dp"
+        android:src="@drawable/ic_face_black_48dp"
         android:onClick="onTakePhotoButtonClick" />
     
     <Button
+        android:id="@+id/save_button"
+        android:enabled="false"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Gem"

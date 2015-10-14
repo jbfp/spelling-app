@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="12dp"
     android:orientation="vertical">
 
     <ImageView
@@ -17,6 +18,9 @@
         android:gravity="center_horizontal"
         android:textAlignment="center"
         android:text="Jakob"
+        android:scrollHorizontally="true"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
