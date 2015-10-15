@@ -136,7 +136,7 @@ public class LoginActivity extends Activity implements LoginView {
             if (user.photo != null) {
                 ByteArrayInputStream stream = new ByteArrayInputStream(user.photo);
                 Drawable drawable = Drawable.createFromStream(stream, null);
-                ImageView profilePictureView = (ImageView) view.findViewById(R.id.user_picture);
+                ImageView profilePictureView = (ImageView) view.findViewById(R.id.profile_image);
                 profilePictureView.setImageDrawable(drawable);
             }
 
