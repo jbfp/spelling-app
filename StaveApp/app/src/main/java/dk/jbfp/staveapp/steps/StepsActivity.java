@@ -25,6 +25,7 @@ import dk.jbfp.staveapp.steps.Step.StepState;
 
 public class StepsActivity extends Activity implements StepsView {
     public static final String USER_KEY = "dk.jbfp.staveapp.USER";
+    private static final int LEVEL_REQUEST_CODE = 42;
 
     private ListView stepsListView;
 
@@ -68,10 +69,21 @@ public class StepsActivity extends Activity implements StepsView {
     }
 
     @Override
-    public void navigateToLevelActivity(String[] words) {
+    public void navigateToLevelActivity(long stepId, String[] words) {
         Intent intent = new Intent(this, LevelActivity.class);
+        intent.putExtra(LevelActivity.STEP_ID_KEY, stepId);
         intent.putExtra(LevelActivity.WORDS_KEY, words);
-        startActivity(intent);
+        startActivityForResult(intent, LEVEL_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == LEVEL_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                long stepId = data.getLongExtra(LevelActivity.STEP_ID_KEY, -1);
+                this.presenter.onStepCompleted(stepId);
+            }
+        }
     }
 
     @Override

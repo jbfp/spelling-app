@@ -29,7 +29,7 @@ import dk.jbfp.staveapp.Callback;
 import dk.jbfp.staveapp.R;
 
 public class LevelActivity extends Activity implements LevelView {
-    public static final String USER_ID_KEY = "dk.jbfp.staveapp.USER_ID";
+    public static final String STEP_ID_KEY = "dk.jbfp.staveapp.STEP_ID";
     public static final String WORDS_KEY = "dk.jbfp.staveapp.WORDS";
 
     private static final String[] Alphabet = {
@@ -111,6 +111,7 @@ public class LevelActivity extends Activity implements LevelView {
     private Drawable stopIcon;
     private int currentWordSoundId;
 
+    private long stepId;
     private LevelPresenter presenter;
 
     @Override
@@ -123,6 +124,7 @@ public class LevelActivity extends Activity implements LevelView {
         this.stopIcon = ContextCompat.getDrawable(this, R.drawable.ic_stop_black_48dp);
 
         Intent intent = getIntent();
+        this.stepId = intent.getLongExtra(STEP_ID_KEY, -1);
         String[] words = intent.getStringArrayExtra(WORDS_KEY);
 
         this.presenter = new LevelPresenter(words);
@@ -228,7 +230,15 @@ public class LevelActivity extends Activity implements LevelView {
 
     @Override
     public void onCompleted() {
-        playSound(this, R.raw.yay_009, null);
+        playSound(this, R.raw.yay_009, new Callback() {
+            @Override
+            public void execute() {
+                Intent intent = new Intent();
+                intent.putExtra(STEP_ID_KEY, stepId);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        });
     }
 
     @Override
@@ -373,6 +383,9 @@ public class LevelActivity extends Activity implements LevelView {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home: {
+                Intent intent = new Intent();
+                intent.putExtra(STEP_ID_KEY, this.stepId);
+                setResult(RESULT_CANCELED, intent);
                 this.finish();
                 return true;
             }

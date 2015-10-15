@@ -77,7 +77,10 @@ public class StepsPresenter {
 
     public void setView(StepsView view) {
         this.view = view;
+        this.loadSteps();
+    }
 
+    private void loadSteps() {
         List<Step> steps = this.steps.getStepsForUser(this.user.id);
 
         if (steps.isEmpty()) {
@@ -94,14 +97,13 @@ public class StepsPresenter {
             }
         }
 
-        this.view.showSteps(steps);
-    }
+        this.view.showSteps(steps);}
 
     public void onStepClicked(Step step) {
         if (step.state == Step.StepState.Locked) {
             return;
         }
-        
+
         Random random = new Random(this.user.seed);
         List<String> words = Arrays.asList(twoLetterWords);
         Collections.shuffle(words, random);
@@ -111,6 +113,29 @@ public class StepsPresenter {
             stepWords[i] = words.get(i);
         }
 
-        this.view.navigateToLevelActivity(stepWords);
+        this.view.navigateToLevelActivity(step.id, stepWords);
+    }
+
+    public void onStepCompleted(long stepId) {
+        List<Step> stepsForUser = this.steps.getStepsForUser(this.user.id);
+        int i;
+
+        for (i = 0; i < stepsForUser.size(); i++) {
+            Step step = stepsForUser.get(i);
+
+            if (step.id == stepId) {
+                step.state = Step.StepState.Done;
+                this.steps.updateStep(step);
+                break;
+            }
+        }
+
+        if ((++i) < stepsForUser.size()) {
+            Step next = stepsForUser.get(i);
+            next.state = Step.StepState.Open;
+            this.steps.updateStep(next);
+        }
+
+        loadSteps();
     }
 }
