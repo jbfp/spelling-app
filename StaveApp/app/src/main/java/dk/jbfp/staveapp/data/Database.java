@@ -81,7 +81,10 @@ public class Database extends SQLiteOpenHelper implements UserRepository, StepRe
                 Contract.Step.COLUMN_STATE
         };
 
-        Cursor c = db.query(Contract.Step.TABLE_NAME, projection, null, null, null, null, null);
+        String selection = Contract.Step.COLUMN_USER_ID + " = ?";
+        String[] selectionArgs = { String.valueOf(userId) };
+
+        Cursor c = db.query(Contract.Step.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
         ArrayList<Step> steps = new ArrayList<>();
         Step.StepState[] stepStates = Step.StepState.values();
 
