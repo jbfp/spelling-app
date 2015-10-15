@@ -128,7 +128,7 @@ public class RegisterActivity extends Activity implements RegisterView {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home: {
-                NavUtils.navigateUpFromSameTask(this);
+                this.finish();
                 return true;
             }
 
