@@ -19,11 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.jbfp.staveapp.R;
+import dk.jbfp.staveapp.User;
+import dk.jbfp.staveapp.data.Database;
 import dk.jbfp.staveapp.level.LevelActivity;
 import dk.jbfp.staveapp.steps.Step.StepState;
 
 public class StepsActivity extends Activity implements StepsView {
-    public static final String USER_ID_KEY = "dk.jbfp.staveapp.USER_ID";
+    public static final String USER_KEY = "dk.jbfp.staveapp.USER";
 
     private ListView stepsListView;
 
@@ -36,24 +38,7 @@ public class StepsActivity extends Activity implements StepsView {
         setContentView(R.layout.activity_steps);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ArrayList<Step> steps = new ArrayList<>();
-
-        for (int i = 0; i < 15; i++) {
-            Step step = new Step();
-
-            if (i < 5) {
-                step.state = StepState.Done;
-            } else if (i < 6) {
-                step.state = StepState.Open;
-            } else {
-                step.state = StepState.Locked;
-            }
-
-            steps.add(step);
-        }
-
-        this.stepAdapter = new StepAdapter(this, steps);
-
+        this.stepAdapter = new StepAdapter(this);
         this.stepsListView = (ListView) findViewById(R.id.steps_list_view);
         this.stepsListView.setAdapter(this.stepAdapter);
         this.stepsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -64,7 +49,8 @@ public class StepsActivity extends Activity implements StepsView {
             }
         });
 
-        this.presenter = new StepsPresenter();
+        User user = (User) getIntent().getParcelableExtra(USER_KEY);
+        this.presenter = new StepsPresenter(user, new Database(this));
         this.presenter.setView(this);
     }
 
@@ -89,13 +75,24 @@ public class StepsActivity extends Activity implements StepsView {
         startActivity(intent);
     }
 
+    @Override
+    public void showSteps(List<Step> steps) {
+        this.stepAdapter.setSteps(steps);
+    }
+
     private final class StepAdapter extends BaseAdapter {
         private final Context context;
         private final List<Step> steps;
 
-        public StepAdapter(Context context, List<Step> steps) {
+        public StepAdapter(Context context) {
             this.context = context;
-            this.steps = steps;
+            this.steps = new ArrayList<>();
+        }
+
+        public void setSteps(List<Step> steps) {
+            this.steps.clear();
+            this.steps.addAll(steps);
+            this.notifyDataSetChanged();
         }
 
         @Override

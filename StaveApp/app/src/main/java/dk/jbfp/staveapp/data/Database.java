@@ -9,10 +9,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.jbfp.staveapp.StepRepository;
 import dk.jbfp.staveapp.User;
 import dk.jbfp.staveapp.UserRepository;
+import dk.jbfp.staveapp.steps.Step;
 
-public class Database extends SQLiteOpenHelper implements UserRepository {
+public class Database extends SQLiteOpenHelper implements UserRepository, StepRepository {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "staveapp.db";
 
@@ -23,6 +25,7 @@ public class Database extends SQLiteOpenHelper implements UserRepository {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(Contract.User.CREATE);
+        db.execSQL(Contract.Step.CREATE);
     }
 
     @Override
@@ -66,6 +69,58 @@ public class Database extends SQLiteOpenHelper implements UserRepository {
         values.put(Contract.User.COLUMN_PHOTO, photo);
 
         db.insert(Contract.User.TABLE_NAME, null, values);
+    }
 
+    @Override
+    public List<Step> getStepsForUser(long userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                Contract.Step._ID,
+                Contract.Step.COLUMN_USER_ID,
+                Contract.Step.COLUMN_STATE
+        };
+
+        Cursor c = db.query(Contract.Step.TABLE_NAME, projection, null, null, null, null, null);
+        ArrayList<Step> steps = new ArrayList<>();
+        Step.StepState[] stepStates = Step.StepState.values();
+
+        while (c.moveToNext()) {
+            Step step = new Step();
+            step.id = c.getInt(0);
+            step.userId = c.getInt(1);
+            step.state = stepStates[c.getInt(2)];
+            steps.add(step);
+        }
+
+        return steps;
+    }
+
+    @Override
+    public Step addStep(Step step) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(Contract.Step.COLUMN_USER_ID, step.userId);
+        values.put(Contract.Step.COLUMN_STATE, step.state.ordinal());
+
+        long id = db.insert(Contract.Step.TABLE_NAME, null, values);
+        step.id = id;
+        return step;
+    }
+
+    @Override
+    public Step updateStep(Step step) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(Contract.Step.COLUMN_STATE, step.state.ordinal());
+
+        String selection = Contract.Step._ID + " = ?";
+        String[] selectionArgs = { String.valueOf(step.id) };
+
+        db.update(Contract.Step.TABLE_NAME, values, selection, selectionArgs);
+
+        return step;
     }
 }

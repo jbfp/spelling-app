@@ -27,7 +27,7 @@ public class LoginPresenter {
                 "by"
         };
 
-        this.view.navigateToStepsActivity(user.id, words);
+        this.view.navigateToStepsActivity(user, words);
     }
 
     public void onResume() {
