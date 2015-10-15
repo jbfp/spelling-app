@@ -2,12 +2,14 @@ package dk.jbfp.staveapp.steps;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.jbfp.staveapp.R;
+import dk.jbfp.staveapp.level.LevelActivity;
 import dk.jbfp.staveapp.steps.Step.StepState;
 
 public class StepsActivity extends Activity implements StepsView {
@@ -53,6 +56,13 @@ public class StepsActivity extends Activity implements StepsView {
 
         this.stepsListView = (ListView) findViewById(R.id.steps_list_view);
         this.stepsListView.setAdapter(this.stepAdapter);
+        this.stepsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Step step = stepAdapter.getItem(position);
+                presenter.onStepClicked(step);
+            }
+        });
 
         this.presenter = new StepsPresenter();
         this.presenter.setView(this);
@@ -70,6 +80,13 @@ public class StepsActivity extends Activity implements StepsView {
                 return super.onOptionsItemSelected(item);
             }
         }
+    }
+
+    @Override
+    public void navigateToLevelActivity(String[] words) {
+        Intent intent = new Intent(this, LevelActivity.class);
+        intent.putExtra(LevelActivity.WORDS_KEY, words);
+        startActivity(intent);
     }
 
     private final class StepAdapter extends BaseAdapter {

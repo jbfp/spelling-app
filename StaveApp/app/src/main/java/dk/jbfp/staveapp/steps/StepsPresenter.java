@@ -6,4 +6,14 @@ public class StepsPresenter {
     public void setView(StepsView view) {
         this.view = view;
     }
+
+    public void onStepClicked(Step step) {
+        String[] words = {
+                "by",
+                "bo",
+                "da"
+        };
+
+        this.view.navigateToLevelActivity(words);
+    }
 }
