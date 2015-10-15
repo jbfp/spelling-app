@@ -30,6 +30,7 @@ import dk.jbfp.staveapp.R;
 
 public class LevelActivity extends Activity implements LevelView {
     public static final String STEP_ID_KEY = "dk.jbfp.staveapp.STEP_ID";
+    public static final String STEP_KEY = "dk.jbfp.staveapp.STEP";
     public static final String WORDS_KEY = "dk.jbfp.staveapp.WORDS";
 
     private static final String[] Alphabet = {
@@ -125,9 +126,10 @@ public class LevelActivity extends Activity implements LevelView {
 
         Intent intent = getIntent();
         this.stepId = intent.getLongExtra(STEP_ID_KEY, -1);
+        int step = intent.getIntExtra(STEP_KEY, -1);
         String[] words = intent.getStringArrayExtra(WORDS_KEY);
 
-        this.presenter = new LevelPresenter(words);
+        this.presenter = new LevelPresenter(step, words);
         this.presenter.setView(this);
     }
 
@@ -269,6 +271,11 @@ public class LevelActivity extends Activity implements LevelView {
     @Override
     public void playAnswerSound() {
         playCombinedSounds(this, 0);
+    }
+
+    @Override
+    public void setStep(int step) {
+        getActionBar().setTitle("Niveau " + step);
     }
 
     private void playCombinedSounds(final Context context, final int index) {

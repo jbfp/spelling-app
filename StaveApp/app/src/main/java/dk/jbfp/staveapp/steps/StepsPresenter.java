@@ -1,5 +1,6 @@
 package dk.jbfp.staveapp.steps;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -67,23 +68,70 @@ public class StepsPresenter {
     };
 
     private User user;
-    private StepRepository steps;
+    private StepRepository stepRepository;
     private StepsView view;
+    private ArrayList<Step> steps;
 
-    public StepsPresenter(User user, StepRepository steps) {
+    public StepsPresenter(User user, StepRepository stepRepository) {
         this.user = user;
-        this.steps = steps;
+        this.stepRepository = stepRepository;
+        this.steps = new ArrayList<>();
+        this.reloadSteps();
     }
 
     public void setView(StepsView view) {
         this.view = view;
-        this.loadSteps();
+        this.view.showSteps(steps);
     }
 
-    private void loadSteps() {
-        List<Step> steps = this.steps.getStepsForUser(this.user.id);
+    public void onStepClicked(Step step) {
+        if (step.state == Step.StepState.Locked) {
+            return;
+        }
 
-        if (steps.isEmpty()) {
+        long stepId = step.id;
+        int stepIndex = this.steps.indexOf(step);
+
+        Random random = new Random(this.user.seed);
+        List<String> words = Arrays.asList(twoLetterWords.clone());
+        Collections.shuffle(words, random);
+        String[] stepWords = new String[6];
+
+        for (int i = 0; i < stepWords.length; i++) {
+            stepWords[i] = words.get(i + stepIndex * stepWords.length);
+        }
+
+        this.view.navigateToLevelActivity(stepId, stepIndex + 1, stepWords);
+    }
+
+    public void onStepCompleted(long stepId) {
+        int i;
+
+        for (i = 0; i < this.steps.size(); i++) {
+            Step step = this.steps.get(i);
+
+            if (step.id == stepId) {
+                step.state = Step.StepState.Done;
+                this.stepRepository.updateStep(step);
+                break;
+            }
+        }
+
+        if ((++i) < this.steps.size()) {
+            Step next = this.steps.get(i);
+            next.state = Step.StepState.Open;
+            this.stepRepository.updateStep(next);
+        }
+
+        this.reloadSteps();
+        this.view.showSteps(steps);
+    }
+
+    private void reloadSteps() {
+        this.steps.clear();
+        this.steps.addAll(this.stepRepository.getStepsForUser(this.user.id));
+
+        if (this.steps.isEmpty()) {
             for (int i = 0; i < twoLetterWords.length / 6; i++) {
                 Step step = new Step();
                 step.userId = this.user.id;
@@ -93,49 +141,8 @@ public class StepsPresenter {
                     step.state = Step.StepState.Open;
                 }
 
-                steps.add(this.steps.addStep(step));
+                this.steps.add(this.stepRepository.addStep(step));
             }
         }
-
-        this.view.showSteps(steps);}
-
-    public void onStepClicked(Step step) {
-        if (step.state == Step.StepState.Locked) {
-            return;
-        }
-
-        Random random = new Random(this.user.seed);
-        List<String> words = Arrays.asList(twoLetterWords);
-        Collections.shuffle(words, random);
-        String[] stepWords = new String[6];
-
-        for (int i = 0; i < stepWords.length; i++) {
-            stepWords[i] = words.get(i);
-        }
-
-        this.view.navigateToLevelActivity(step.id, stepWords);
-    }
-
-    public void onStepCompleted(long stepId) {
-        List<Step> stepsForUser = this.steps.getStepsForUser(this.user.id);
-        int i;
-
-        for (i = 0; i < stepsForUser.size(); i++) {
-            Step step = stepsForUser.get(i);
-
-            if (step.id == stepId) {
-                step.state = Step.StepState.Done;
-                this.steps.updateStep(step);
-                break;
-            }
-        }
-
-        if ((++i) < stepsForUser.size()) {
-            Step next = stepsForUser.get(i);
-            next.state = Step.StepState.Open;
-            this.steps.updateStep(next);
-        }
-
-        loadSteps();
     }
 }

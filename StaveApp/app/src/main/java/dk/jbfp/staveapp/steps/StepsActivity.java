@@ -69,9 +69,10 @@ public class StepsActivity extends Activity implements StepsView {
     }
 
     @Override
-    public void navigateToLevelActivity(long stepId, String[] words) {
+    public void navigateToLevelActivity(long stepId, int stepIndex, String[] words) {
         Intent intent = new Intent(this, LevelActivity.class);
         intent.putExtra(LevelActivity.STEP_ID_KEY, stepId);
+        intent.putExtra(LevelActivity.STEP_KEY, stepIndex);
         intent.putExtra(LevelActivity.WORDS_KEY, words);
         startActivityForResult(intent, LEVEL_REQUEST_CODE);
     }

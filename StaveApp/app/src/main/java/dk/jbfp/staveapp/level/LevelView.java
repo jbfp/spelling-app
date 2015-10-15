@@ -11,4 +11,6 @@ public interface LevelView {
     void playWordSound(int delay);
     void stopWordSound();
     void playAnswerSound();
+
+    void setStep(int step);
 }

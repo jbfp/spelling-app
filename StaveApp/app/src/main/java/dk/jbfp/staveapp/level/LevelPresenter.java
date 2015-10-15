@@ -1,12 +1,14 @@
 package dk.jbfp.staveapp.level;
 
 public class LevelPresenter {
+    private final int step;
     private final Word[] words;
     private int wordIndex;
     private LevelState state;
     private LevelView view;
 
-    public LevelPresenter(String[] words) {
+    public LevelPresenter(int step, String[] words) {
+        this.step = step;
         this.state = LevelState.Full;
         this.wordIndex = 0;
         this.words = new Word[words.length];
@@ -18,6 +20,7 @@ public class LevelPresenter {
 
     public void setView(LevelView view) {
         this.view = view;
+        this.view.setStep(this.step);
         this.onNext();
     }
 
