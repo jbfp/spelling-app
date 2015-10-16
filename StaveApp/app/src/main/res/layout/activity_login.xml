@@ -2,10 +2,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:background="#E0E0E0"
     tools:context="dk.jbfp.staveapp.login.LoginActivity">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        card_view:cardElevation="2dp"
+        card_view:cardUseCompatPadding="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:padding="8dp">
+
+            <TextView
+                style="@android:style/TextAppearance.Material.Headline"
+                android:text="Velkommen!"
+                android:layout_width="fill_parent"
+                android:layout_height="36dp" />
+
+            <TextView
+                style="@android:style/TextAppearance.Material.Body1"
+                android:text="Vælg en bruger for at komme i gang. Du kan også lave en ny bruger ved at trykke på +"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
 
     <GridView
         android:id="@+id/users_view"
