@@ -108,6 +108,11 @@ public class StepsPresenter {
             Step step = this.steps.get(i);
 
             if (step.id == stepId) {
+                if (step.state == Step.StepState.Perfect) {
+                    // Don't overwrite an already perfect step with a mere 'done'.
+                    break;
+                }
+
                 if (perfect) {
                     step.state = Step.StepState.Perfect;
                 } else {

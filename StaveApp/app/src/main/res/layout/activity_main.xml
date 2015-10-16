@@ -28,11 +28,12 @@
         android:orientation="vertical">
         <ImageButton
             android:id="@+id/LytButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
             android:background="?android:selectableItemBackground"
             android:layout_centerHorizontal="true"
             android:onClick="onLytButtonClick"
+            android:scaleType="fitXY"
             android:src="@drawable/ic_play_circle_outline_black_48dp" />
 
     </LinearLayout>
@@ -59,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="onSvarButtonClick"
-                android:text="Næste"/>
+                android:text="Svar"/>
         </LinearLayout>
 
     </RelativeLayout>
