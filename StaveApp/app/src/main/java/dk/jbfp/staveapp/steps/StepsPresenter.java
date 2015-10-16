@@ -16,7 +16,6 @@ public class StepsPresenter {
             "by",
             "bæ",
             "da",
-            "du",
             "dø",
             "en",
             "fe",
@@ -99,7 +98,7 @@ public class StepsPresenter {
             stepWords[i] = words.get(i + step.offset);
         }
 
-        this.view.navigateToLevelActivity(stepId, stepIndex + 1, stepWords);
+        this.view.navigateToLevelActivity(stepId, stepIndex + 1, twoLetterWords);
     }
 
     public void onStepCompleted(long stepId, boolean perfect) {
