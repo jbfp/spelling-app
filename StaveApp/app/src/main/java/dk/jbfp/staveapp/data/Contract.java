@@ -21,11 +21,15 @@ public final class Contract {
         public static final String TABLE_NAME = "step";
         public static final String COLUMN_USER_ID = "user_id";
         public static final String COLUMN_STATE = "state";
+        public static final String COLUMN_LENGTH = "length";
+        public static final String COLUMN_OFFSET = "offset";
         public static final String CREATE =
                 "CREATE TABLE " + TABLE_NAME + " (" +
                         Step._ID + " INTEGER PRIMARY KEY NOT NULL," +
                         COLUMN_USER_ID + " INTEGER NOT NULL," +
                         COLUMN_STATE + " INTEGER NOT NULL," +
+                        COLUMN_LENGTH + " INTEGER NOT NULL," +
+                        COLUMN_OFFSET + " INTEGER NOT NULL," +
                         "FOREIGN KEY (" + COLUMN_USER_ID + ") " +
                         "REFERENCES " + User.TABLE_NAME +
                 ")";

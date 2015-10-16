@@ -51,7 +51,6 @@ public class StepsPresenter {
             "so",
             "sy",
             "sø",
-            "så",
             "te",
             "ti",
             "to",
@@ -94,10 +93,10 @@ public class StepsPresenter {
         Random random = new Random(this.user.seed);
         List<String> words = Arrays.asList(twoLetterWords.clone());
         Collections.shuffle(words, random);
-        String[] stepWords = new String[6];
+        String[] stepWords = new String[step.length];
 
         for (int i = 0; i < stepWords.length; i++) {
-            stepWords[i] = words.get(i + stepIndex * stepWords.length);
+            stepWords[i] = words.get(i + step.offset);
         }
 
         this.view.navigateToLevelActivity(stepId, stepIndex + 1, stepWords);
@@ -139,16 +138,25 @@ public class StepsPresenter {
         this.steps.addAll(this.stepRepository.getStepsForUser(this.user.id));
 
         if (this.steps.isEmpty()) {
-            for (int i = 0; i < twoLetterWords.length / 6; i++) {
+            for (int i = 0; i < twoLetterWords.length;) {
+                int numWordsForLevel = i + 1;
+
+                if (numWordsForLevel > 6) {
+                    numWordsForLevel = 6;
+                }
+
                 Step step = new Step();
                 step.userId = this.user.id;
                 step.state = Step.StepState.Locked;
+                step.length = numWordsForLevel;
+                step.offset = i;
 
                 if (i == 0) {
                     step.state = Step.StepState.Open;
                 }
 
                 this.steps.add(this.stepRepository.addStep(step));
+                i += numWordsForLevel;
             }
         }
     }

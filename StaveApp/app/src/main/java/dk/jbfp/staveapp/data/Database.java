@@ -78,7 +78,9 @@ public class Database extends SQLiteOpenHelper implements UserRepository, StepRe
         String[] projection = {
                 Contract.Step._ID,
                 Contract.Step.COLUMN_USER_ID,
-                Contract.Step.COLUMN_STATE
+                Contract.Step.COLUMN_STATE,
+                Contract.Step.COLUMN_LENGTH,
+                Contract.Step.COLUMN_OFFSET
         };
 
         String selection = Contract.Step.COLUMN_USER_ID + " = ?";
@@ -93,6 +95,8 @@ public class Database extends SQLiteOpenHelper implements UserRepository, StepRe
             step.id = c.getInt(0);
             step.userId = c.getInt(1);
             step.state = stepStates[c.getInt(2)];
+            step.length = c.getInt(3);
+            step.offset = c.getInt(4);
             steps.add(step);
         }
 
@@ -106,6 +110,8 @@ public class Database extends SQLiteOpenHelper implements UserRepository, StepRe
         ContentValues values = new ContentValues();
         values.put(Contract.Step.COLUMN_USER_ID, step.userId);
         values.put(Contract.Step.COLUMN_STATE, step.state.ordinal());
+        values.put(Contract.Step.COLUMN_LENGTH, step.length);
+        values.put(Contract.Step.COLUMN_OFFSET, step.offset);
 
         long id = db.insert(Contract.Step.TABLE_NAME, null, values);
         step.id = id;
