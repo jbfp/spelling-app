@@ -56,7 +56,6 @@ public class StepsPresenter {
             "ti",
             "to",
             "tø",
-            "tå",
             "uf",
             "vi",
             "æg",
