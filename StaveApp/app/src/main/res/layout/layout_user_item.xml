@@ -1,30 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="12dp"
     android:orientation="vertical">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/profile_image"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_face_black_48dp"
-        app:civ_border_width="1dp"
-        app:civ_border_color="#B6B6B6"/>
-
-    <TextView
-        android:id="@+id/user_name_view"
-        style="@style/Base.TextAppearance.AppCompat.Subhead"
-        android:gravity="center_horizontal"
-        android:textAlignment="center"
-        android:text="Jakob"
-        android:scrollHorizontally="true"
-        android:ellipsize="end"
-        android:maxLines="1"
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        card_view:cardElevation="2dp"
+        card_view:cardUseCompatPadding="true"
+        android:layout_centerHorizontal="true"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <dk.jbfp.staveapp.AspectRatioImageView
+                android:id="@+id/profile_image"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/no_image"/>
+
+            <TextView
+                android:id="@+id/user_name_view"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textColor="@color/primary_text"
+                android:text="Jakob"
+                android:scrollHorizontally="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:layout_width="fill_parent"
+                android:layout_height="32dp" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 </LinearLayout>

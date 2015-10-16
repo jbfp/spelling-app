@@ -4,12 +4,13 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:background="#E0E0E0"
     tools:context="dk.jbfp.staveapp.login.LoginActivity">
 
     <GridView
         android:id="@+id/users_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:numColumns="3" />
+        android:numColumns="2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
 
 </LinearLayout>

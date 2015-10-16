@@ -20,9 +20,9 @@
 
     <ImageButton
         android:id="@+id/photo_image_button"
+        android:src="@drawable/ic_photo_camera_black_48dp"
         android:layout_width="fill_parent"
         android:layout_height="320dp"
-        android:src="@drawable/ic_face_black_48dp"
         android:onClick="onTakePhotoButtonClick" />
     
     <Button

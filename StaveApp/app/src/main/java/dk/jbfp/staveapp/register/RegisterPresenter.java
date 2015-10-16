@@ -1,7 +1,5 @@
 package dk.jbfp.staveapp.register;
 
-import android.graphics.Bitmap;
-
 import java.util.Random;
 
 import dk.jbfp.staveapp.UserRepository;
@@ -12,6 +10,9 @@ public class RegisterPresenter {
     private UserRepository users;
     private RegisterView view;
 
+    private String name;
+    private byte[] photo;
+
     public RegisterPresenter(UserRepository users) {
         this.users = users;
     }
@@ -21,26 +22,20 @@ public class RegisterPresenter {
     }
 
     public void onNameChanged(String name) {
-        this.view.setSaveButtonEnabled(name.length() > 0);
+        this.name = name;
+        this.view.setSaveButtonEnabled(this.name.length() > 0);
     }
 
     public void onTakePhotoButtonClick() {
         this.view.takePhoto();
     }
 
-    public void onPhotoTaken(Bitmap photo) {
-        this.view.setPhoto(photo);
+    public void onPhotoTaken(byte[] photo) {
+        this.photo = photo;
+        this.view.setPhoto(this.photo);
     }
 
-    public void save(String name, byte[] photo) {
-        if (name == null) {
-            name = "";
-        }
-
-        if (name.length() == 0) {
-            throw new IllegalArgumentException();
-        }
-
+    public void save() {
         int seed = random.nextInt();
         this.users.addUser(name, seed, photo);
         this.view.returnToLoginActivity();

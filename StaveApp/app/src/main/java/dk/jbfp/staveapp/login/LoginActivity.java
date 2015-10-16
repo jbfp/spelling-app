@@ -131,16 +131,19 @@ public class LoginActivity extends Activity implements LoginView {
                 view = layoutInflater.inflate(R.layout.layout_user_item, null);
             }
 
+            ImageView profilePictureView = (ImageView) view.findViewById(R.id.profile_image);
+            TextView userNameView = (TextView) view.findViewById(R.id.user_name_view);
+
             User user = this.users.get(position);
 
-            if (user.photo != null) {
+            if (user.photo == null) {
+                profilePictureView.setImageResource(R.drawable.no_image);
+            } else {
                 ByteArrayInputStream stream = new ByteArrayInputStream(user.photo);
                 Drawable drawable = Drawable.createFromStream(stream, null);
-                ImageView profilePictureView = (ImageView) view.findViewById(R.id.profile_image);
                 profilePictureView.setImageDrawable(drawable);
             }
 
-            TextView userNameView = (TextView) view.findViewById(R.id.user_name_view);
             userNameView.setText(user.name);
 
             return view;

@@ -5,11 +5,10 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -90,8 +89,9 @@ public class RegisterActivity extends Activity implements RegisterView {
     }
 
     @Override
-    public void setPhoto(Bitmap photo) {
-        this.photoImageButton.setImageBitmap(photo);
+    public void setPhoto(byte[] photo) {
+        Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
+        this.photoImageButton.setImageBitmap(bitmap);
     }
 
     @Override
@@ -101,7 +101,10 @@ public class RegisterActivity extends Activity implements RegisterView {
                 try {
                     ContentResolver contentResolver = getContentResolver();
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(contentResolver, this.photoUri);
-                    this.presenter.onPhotoTaken(bitmap);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] photo = stream.toByteArray();
+                    this.presenter.onPhotoTaken(photo);
                     this.photoUri = null;
                 } catch (Exception e) { }
             }
@@ -109,19 +112,12 @@ public class RegisterActivity extends Activity implements RegisterView {
     }
 
     public void onSaveButtonClick(View view) {
-        String name = this.nameEditText.getText().toString();
-        BitmapDrawable drawable = (BitmapDrawable) this.photoImageButton.getDrawable();
-        Bitmap bitmap = drawable.getBitmap();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] photo = stream.toByteArray();
-
-        this.presenter.save(name, photo);
+        this.presenter.save();
     }
 
     @Override
     public void returnToLoginActivity() {
-        NavUtils.navigateUpFromSameTask(this);
+        this.finish();
     }
 
     @Override
