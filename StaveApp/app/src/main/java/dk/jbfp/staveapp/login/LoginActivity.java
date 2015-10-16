@@ -86,7 +86,7 @@ public class LoginActivity extends Activity implements LoginView {
     }
 
     @Override
-    public void navigateToStepsActivity(User user, String[] words) {
+    public void navigateToStepsActivity(User user) {
         Intent intent = new Intent(this, StepsActivity.class);
         intent.putExtra(StepsActivity.USER_KEY, user);
         startActivity(intent);

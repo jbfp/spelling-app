@@ -22,6 +22,11 @@ public class User implements Parcelable {
         dest.writeInt(this.id);
         dest.writeString(this.name);
         dest.writeInt(this.seed);
+
+        if (photo == null) {
+            return;
+        }
+
         dest.writeInt(this.photo.length);
         dest.writeByteArray(this.photo);
     }

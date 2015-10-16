@@ -21,13 +21,7 @@ public class LoginPresenter {
     }
 
     public void onUserClicked(User user) {
-        String[] words = {
-                "da",
-                "bo",
-                "by"
-        };
-
-        this.view.navigateToStepsActivity(user, words);
+        this.view.navigateToStepsActivity(user);
     }
 
     public void onResume() {
