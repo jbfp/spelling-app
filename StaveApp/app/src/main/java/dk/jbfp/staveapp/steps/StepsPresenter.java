@@ -98,7 +98,7 @@ public class StepsPresenter {
             stepWords[i] = words.get(i + step.offset);
         }
 
-        this.view.navigateToLevelActivity(stepId, stepIndex + 1, twoLetterWords);
+        this.view.navigateToLevelActivity(stepId, stepIndex + 1, stepWords);
     }
 
     public void onStepCompleted(long stepId, boolean perfect) {
