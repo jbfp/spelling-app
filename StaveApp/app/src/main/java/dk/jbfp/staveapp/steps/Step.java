@@ -8,6 +8,7 @@ public class Step {
     public enum StepState {
         Open,
         Locked,
-        Done
+        Done,
+        Perfect
     }
 }

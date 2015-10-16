@@ -2,6 +2,7 @@ package dk.jbfp.staveapp.level;
 
 public class LevelPresenter {
     private final int step;
+    private boolean perfect;
     private final Word[] words;
     private int wordIndex;
     private LevelState state;
@@ -9,6 +10,7 @@ public class LevelPresenter {
 
     public LevelPresenter(int step, String[] words) {
         this.step = step;
+        this.perfect = true;
         this.state = LevelState.Full;
         this.wordIndex = 0;
         this.words = new Word[words.length];
@@ -63,7 +65,6 @@ public class LevelPresenter {
             }
 
             if (allCorrect) {
-                // We're done here!
                 this.transitionToEnd();
             } else {
                 this.transitionToRepetition();
@@ -73,10 +74,11 @@ public class LevelPresenter {
 
     private void transitionToEnd() throws Exception {
         this.state = LevelState.End;
-        this.view.onCompleted();
+        this.view.onCompleted(this.perfect);
     }
 
     private void transitionToRepetition() {
+        this.perfect = false;
         this.state = LevelState.Repetition;
         this.view.clearList();
 

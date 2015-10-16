@@ -32,6 +32,7 @@ public class LevelActivity extends Activity implements LevelView {
     public static final String STEP_ID_KEY = "dk.jbfp.staveapp.STEP_ID";
     public static final String STEP_KEY = "dk.jbfp.staveapp.STEP";
     public static final String WORDS_KEY = "dk.jbfp.staveapp.WORDS";
+    public static final String GAME_RESULT_KEY = "dk.jbfp.staveapp.GAME_RESULT";
 
     private static final String[] Alphabet = {
             "A", "B","C","D","E","F","G", "H", "I", "J", "K", "L", "M", "N", "O",
@@ -231,12 +232,13 @@ public class LevelActivity extends Activity implements LevelView {
     }
 
     @Override
-    public void onCompleted() {
+    public void onCompleted(final boolean perfect) {
         playSound(this, R.raw.yay_009, new Callback() {
             @Override
             public void execute() {
                 Intent intent = new Intent();
                 intent.putExtra(STEP_ID_KEY, stepId);
+                intent.putExtra(GAME_RESULT_KEY, perfect);
                 setResult(RESULT_OK, intent);
                 finish();
             }

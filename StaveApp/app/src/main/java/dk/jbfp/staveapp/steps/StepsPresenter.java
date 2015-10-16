@@ -103,14 +103,19 @@ public class StepsPresenter {
         this.view.navigateToLevelActivity(stepId, stepIndex + 1, stepWords);
     }
 
-    public void onStepCompleted(long stepId) {
+    public void onStepCompleted(long stepId, boolean perfect) {
         int i;
 
         for (i = 0; i < this.steps.size(); i++) {
             Step step = this.steps.get(i);
 
             if (step.id == stepId) {
-                step.state = Step.StepState.Done;
+                if (perfect) {
+                    step.state = Step.StepState.Perfect;
+                } else {
+                    step.state = Step.StepState.Done;
+                }
+
                 this.stepRepository.updateStep(step);
                 break;
             }
@@ -118,8 +123,11 @@ public class StepsPresenter {
 
         if ((++i) < this.steps.size()) {
             Step next = this.steps.get(i);
-            next.state = Step.StepState.Open;
-            this.stepRepository.updateStep(next);
+
+            if (next.state == Step.StepState.Locked) {
+                next.state = Step.StepState.Open;
+                this.stepRepository.updateStep(next);
+            }
         }
 
         this.reloadSteps();

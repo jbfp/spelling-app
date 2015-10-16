@@ -82,7 +82,8 @@ public class StepsActivity extends Activity implements StepsView {
         if (requestCode == LEVEL_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 long stepId = data.getLongExtra(LevelActivity.STEP_ID_KEY, -1);
-                this.presenter.onStepCompleted(stepId);
+                boolean perfect = data.getBooleanExtra(LevelActivity.GAME_RESULT_KEY, false);
+                this.presenter.onStepCompleted(stepId, perfect);
             }
         }
     }
@@ -137,7 +138,7 @@ public class StepsActivity extends Activity implements StepsView {
 
             if (step.state == StepState.Locked) {
                 imageId = R.drawable.ic_lock_outline_black_48dp;
-            } else if (step.state == StepState.Done) {
+            } else if (step.state == StepState.Done || step.state == StepState.Perfect) {
                 imageId = R.drawable.ic_done_black_48dp;
             }
 
@@ -145,6 +146,17 @@ public class StepsActivity extends Activity implements StepsView {
 
             TextView textView = (TextView) view.findViewById(R.id.step_item_text);
             textView.setText("Niveau " + (position + 1));
+
+            ImageView starImageView = (ImageView) view.findViewById(R.id.step_item_star);
+            int starImageId = 0;
+
+            if (step.state == StepState.Perfect) {
+                starImageId = R.drawable.ic_star_black_48dp;
+            } else {
+                starImageId = R.drawable.ic_star_border_black_48dp;
+            }
+
+            starImageView.setImageResource(starImageId);
 
             return view;
         }

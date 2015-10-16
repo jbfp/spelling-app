@@ -2,7 +2,7 @@ package dk.jbfp.staveapp.level;
 
 public interface LevelView {
     void onNextWord(Word next);
-    void onCompleted();
+    void onCompleted(boolean perfect);
 
     void addWord(Word word);
     void clearList();
