@@ -283,6 +283,7 @@ public class LevelActivity extends Activity implements LevelView {
     private void playCombinedSounds(final Context context, final int index) {
         if (cancelAnswerSound) {
             cancelAnswerSound = false;
+            isPlayingCombinedSounds = false;
             return;
         }
 
