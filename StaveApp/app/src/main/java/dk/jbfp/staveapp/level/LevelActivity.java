@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import dk.jbfp.staveapp.Callback;
@@ -246,22 +247,20 @@ public class LevelActivity extends Activity implements LevelView {
     }
 
     @Override
-    public void addWord(Word word) {
-        LinearLayout wordsLinearLayout = (LinearLayout) findViewById(R.id.WordsLinearLayout);
-        TextView wordTextView = new TextView(this);
-        wordTextView.setText(word.getAnswer());
-
-        if (word.getStatus() == Word.WordStatus.Incorrect) {
-            wordTextView.setTextColor(Color.RED);
-        }
-
-        wordsLinearLayout.addView(wordTextView);
-    }
-
-    @Override
-    public void clearList() {
+    public void showWords(List<Word> words) {
         LinearLayout wordsLinearLayout = (LinearLayout) findViewById(R.id.WordsLinearLayout);
         wordsLinearLayout.removeAllViews();
+
+        for (Word word: words) {
+            TextView wordTextView = new TextView(this);
+            wordTextView.setText(word.getAnswer());
+
+            if (word.getStatus() == Word.WordStatus.Incorrect) {
+                wordTextView.setTextColor(Color.RED);
+            }
+
+            wordsLinearLayout.addView(wordTextView);
+        }
     }
 
     @Override

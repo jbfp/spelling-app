@@ -1,17 +1,19 @@
 package dk.jbfp.staveapp.level;
 
+import java.util.Arrays;
+
 public class LevelPresenter {
     private final int step;
-    private boolean perfect;
     private final Word[] words;
     private int wordIndex;
+    private boolean perfect;
     private LevelState state;
     private LevelView view;
 
     public LevelPresenter(int step, String[] words) {
         this.step = step;
-        this.perfect = true;
         this.state = LevelState.Full;
+        this.perfect = true;
         this.wordIndex = 0;
         this.words = new Word[words.length];
 
@@ -41,13 +43,14 @@ public class LevelPresenter {
     public void onAnswerClicked(String answer) throws Exception {
         Word word = words[wordIndex];
         word.setAnswer(answer);
-        this.view.addWord(word);
 
         if (this.state == LevelState.Full) {
             handleFull();
         } else if (this.state == LevelState.Repetition) {
             handleRepetition();
         }
+
+        this.view.showWords(Arrays.asList(this.words));
     }
 
     private void handleFull() throws Exception {
@@ -80,7 +83,6 @@ public class LevelPresenter {
     private void transitionToRepetition() {
         this.perfect = false;
         this.state = LevelState.Repetition;
-        this.view.clearList();
 
         for (int i = 0; i < this.words.length; i++) {
             if (this.words[i].getStatus() == Word.WordStatus.Incorrect) {
@@ -123,8 +125,11 @@ public class LevelPresenter {
     }
 
     private void transitionToFull() {
+        for (Word word: this.words) {
+            word.setAnswer("");
+        }
+
         this.state = LevelState.Full;
-        this.view.clearList();
         this.wordIndex = 0;
         this.onNext();
     }

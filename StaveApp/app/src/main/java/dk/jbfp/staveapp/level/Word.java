@@ -12,11 +12,11 @@ public class Word {
 
     public Word(String word) {
         this.word = word;
-        this.answer = null;
+        this.answer = "";
     }
 
     public WordStatus getStatus() {
-        if (this.answer == null) {
+        if (this.answer.length() == 0) {
             return WordStatus.Incomplete;
         }
 
@@ -28,6 +28,10 @@ public class Word {
     }
 
     public void setAnswer(String answer) {
+        if (answer == null) {
+            throw new IllegalArgumentException();
+        }
+
         this.answer = answer;
     }
 
