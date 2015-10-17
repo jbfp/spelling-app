@@ -1,5 +1,7 @@
 package dk.jbfp.staveapp.register;
 
+import android.os.AsyncTask;
+
 import java.util.Random;
 
 import dk.jbfp.staveapp.UserRepository;
@@ -36,8 +38,20 @@ public class RegisterPresenter {
     }
 
     public void save() {
-        int seed = random.nextInt();
-        this.users.addUser(name, seed, photo);
-        this.view.returnToLoginActivity();
+        final int seed = random.nextInt();
+
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                users.addUser(name, seed, photo);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                view.returnToLoginActivity();
+            }
+        }.execute();
     }
 }

@@ -1,5 +1,9 @@
 package dk.jbfp.staveapp.login;
 
+import android.os.AsyncTask;
+
+import java.util.List;
+
 import dk.jbfp.staveapp.User;
 import dk.jbfp.staveapp.UserRepository;
 
@@ -11,20 +15,33 @@ public class LoginPresenter {
         this.users = users;
     }
 
-    public void setView(LoginView view) {
+    public void setView(final LoginView view) {
         this.view = view;
-        this.view.showUsers(this.users.getAllUsers());
+        new GetAllUsersAsyncTask().execute();
     }
 
     public void onNewUserClicked() {
         this.view.navigateToRegisterActivity();
     }
 
-    public void onUserClicked(User user) {
+    public void onUserClicked(final User user) {
         this.view.navigateToStepsActivity(user);
     }
 
     public void onResume() {
-        this.view.showUsers(this.users.getAllUsers());
+        new GetAllUsersAsyncTask().execute();
+    }
+
+    private class GetAllUsersAsyncTask extends AsyncTask<Void, Void, List<User>> {
+
+        @Override
+        protected List<User> doInBackground(Void... params) {
+            return users.getAllUsers();
+        }
+
+        @Override
+        protected void onPostExecute(List<User> users) {
+            view.showUsers(users);
+        }
     }
 }

@@ -49,8 +49,13 @@ public class StepsActivity extends Activity implements StepsView {
             }
         });
 
-        User user = (User) getIntent().getParcelableExtra(USER_KEY);
+        User user = getIntent().getParcelableExtra(USER_KEY);
         this.presenter = new StepsPresenter(user, new Database(this));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         this.presenter.setView(this);
     }
 

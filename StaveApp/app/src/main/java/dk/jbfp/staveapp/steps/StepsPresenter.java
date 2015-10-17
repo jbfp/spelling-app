@@ -1,5 +1,7 @@
 package dk.jbfp.staveapp.steps;
 
+import android.os.AsyncTask;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -73,12 +75,11 @@ public class StepsPresenter {
         this.user = user;
         this.stepRepository = stepRepository;
         this.steps = new ArrayList<>();
-        this.reloadSteps();
     }
 
     public void setView(StepsView view) {
         this.view = view;
-        this.view.showSteps(steps);
+        this.reloadSteps();
     }
 
     public void onStepClicked(Step step) {
@@ -138,30 +139,46 @@ public class StepsPresenter {
     }
 
     private void reloadSteps() {
-        this.steps.clear();
-        this.steps.addAll(this.stepRepository.getStepsForUser(this.user.id));
+        new LoadStepsAsyncTask().execute();
+    }
 
-        if (this.steps.isEmpty()) {
-            for (int i = 0; i < twoLetterWords.length;) {
-                int numWordsForLevel = i + 1;
+    private class LoadStepsAsyncTask extends AsyncTask<Void, Void, List<Step>> {
 
-                if (numWordsForLevel > 6) {
-                    numWordsForLevel = 6;
+        @Override
+        protected List<Step> doInBackground(Void... params) {
+            List<Step> steps = stepRepository.getStepsForUser(user.id);
+
+            if (steps.isEmpty()) {
+                for (int i = 0; i < twoLetterWords.length;) {
+                    int numWordsForLevel = i + 1;
+
+                    if (numWordsForLevel > 6) {
+                        numWordsForLevel = 6;
+                    }
+
+                    Step step = new Step();
+                    step.userId = user.id;
+                    step.state = Step.StepState.Locked;
+                    step.length = numWordsForLevel;
+                    step.offset = i;
+
+                    if (i == 0) {
+                        step.state = Step.StepState.Open;
+                    }
+
+                    steps.add(stepRepository.addStep(step));
+                    i += numWordsForLevel;
                 }
-
-                Step step = new Step();
-                step.userId = this.user.id;
-                step.state = Step.StepState.Locked;
-                step.length = numWordsForLevel;
-                step.offset = i;
-
-                if (i == 0) {
-                    step.state = Step.StepState.Open;
-                }
-
-                this.steps.add(this.stepRepository.addStep(step));
-                i += numWordsForLevel;
             }
+
+            return steps;
+        }
+
+        @Override
+        protected void onPostExecute(List<Step> result) {
+            steps.clear();
+            steps.addAll(result);
+            view.showSteps(steps);
         }
     }
 }
