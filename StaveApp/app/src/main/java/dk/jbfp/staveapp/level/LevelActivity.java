@@ -235,7 +235,15 @@ public class LevelActivity extends Activity implements LevelView {
 
     @Override
     public void onCompleted(final boolean perfect) {
-        playSound(this, R.raw.yay_009, new Callback() {
+        int soundId;
+
+        if (perfect) {
+            soundId = R.raw.yay_011;
+        } else {
+            soundId = R.raw.yay_010;
+        }
+
+        playSound(this, soundId, new Callback() {
             @Override
             public void execute() {
                 Intent intent = new Intent();
@@ -329,7 +337,11 @@ public class LevelActivity extends Activity implements LevelView {
     }
 
     @Override
-    public void playWordSound(int delay) {
+    public synchronized void playWordSound(int delay) {
+        if (this.isPlayingCombinedSounds) {
+            this.cancelAnswerSound = true;
+        }
+
         final ImageButton lytButton = (ImageButton) findViewById(R.id.LytButton);
         lytButtonMediaPlayer = MediaPlayer.create(lytButton.getContext(), currentWordSoundId);
         lytButtonMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
