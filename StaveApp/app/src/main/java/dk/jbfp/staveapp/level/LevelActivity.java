@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -277,6 +278,11 @@ public class LevelActivity extends Activity implements LevelView {
     @Override
     public void setStep(int step) {
         getActionBar().setTitle("Niveau " + step);
+    }
+
+    @Override
+    public void displayMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     private void playCombinedSounds(final Context context, final int index) {

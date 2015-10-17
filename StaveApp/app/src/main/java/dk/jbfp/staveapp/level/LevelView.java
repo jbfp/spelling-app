@@ -13,4 +13,5 @@ public interface LevelView {
     void playAnswerSound();
 
     void setStep(int step);
+    void displayMessage(String message);
 }

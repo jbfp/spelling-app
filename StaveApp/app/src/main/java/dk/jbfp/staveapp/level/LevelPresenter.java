@@ -76,6 +76,12 @@ public class LevelPresenter {
     }
 
     private void transitionToEnd() throws Exception {
+        if (this.perfect) {
+            this.view.displayMessage("Perfekt!");
+        } else {
+            this.view.displayMessage("Godt arbejde!");
+        }
+
         this.state = LevelState.End;
         this.view.onCompleted(this.perfect);
     }
@@ -91,6 +97,7 @@ public class LevelPresenter {
             }
         }
 
+        this.view.displayMessage("Prøv igen.");
         this.onNext();
     }
 
@@ -131,6 +138,7 @@ public class LevelPresenter {
 
         this.state = LevelState.Full;
         this.wordIndex = 0;
+        this.view.displayMessage("En gang mere!");
         this.onNext();
     }
 
