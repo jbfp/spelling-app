@@ -143,16 +143,18 @@ public class Database extends SQLiteOpenHelper implements UserRepository, StepRe
     }
 
     @Override
-    public void insertStat(String word, boolean correct, double time, int listens) {
+    public Stat insertStat(Stat stat) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(Contract.Stat.COLUMN_WORD, word);
-        values.put(Contract.Stat.COLUMN_CORRECT, correct ? 1 : 0);
-        values.put(Contract.Stat.COLUMN_TIME, time);
-        values.put(Contract.Stat.COLUMN_LISTENS, listens);
+        values.put(Contract.Stat.COLUMN_WORD, stat.word);
+        values.put(Contract.Stat.COLUMN_CORRECT, stat.correct ? 1 : 0);
+        values.put(Contract.Stat.COLUMN_TIME, stat.time);
+        values.put(Contract.Stat.COLUMN_LISTENS, stat.listens);
 
-        db.insert(Contract.Stat.TABLE_NAME, null, values);
+        long id = db.insert(Contract.Stat.TABLE_NAME, null, values);
+        stat.id = id;
+        return stat;
     }
 
     @Override

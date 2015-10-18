@@ -1,17 +1,28 @@
 package dk.jbfp.staveapp.level;
 
+import android.os.AsyncTask;
+
 import java.util.Arrays;
+
+import dk.jbfp.staveapp.Stat;
+import dk.jbfp.staveapp.StatRepository;
 
 public class LevelPresenter {
     private final int step;
     private final Word[] words;
+    private final StatRepository stats;
     private int wordIndex;
     private boolean perfect;
     private LevelState state;
     private LevelView view;
 
-    public LevelPresenter(int step, String[] words) {
+    // Stats.
+    private double startTime;
+    private int listens;
+
+    public LevelPresenter(int step, String[] words, StatRepository stats) {
         this.step = step;
+        this.stats = stats;
         this.state = LevelState.Full;
         this.perfect = true;
         this.wordIndex = 0;
@@ -34,6 +45,7 @@ public class LevelPresenter {
 
     public void onPlayClicked() {
         this.view.playWordSound(0);
+        this.listens++;
     }
 
     public void onStopClicked() {
@@ -43,6 +55,14 @@ public class LevelPresenter {
     public void onAnswerClicked(String answer) throws Exception {
         Word word = words[wordIndex];
         word.setAnswer(answer);
+
+        // Stats.
+        Stat stat = new Stat();
+        stat.word = word.getWord();
+        stat.correct = word.getStatus() == Word.WordStatus.Correct;
+        stat.time = System.nanoTime() - startTime;
+        stat.listens = this.listens;
+        new InsertStatAsyncTask(this.stats).execute(stat);
 
         if (this.state == LevelState.Full) {
             handleFull();
@@ -143,6 +163,10 @@ public class LevelPresenter {
     }
 
     private void onNext() {
+        // Reset stats.
+        this.startTime = System.nanoTime();
+        this.listens = 0;
+
         this.view.onNextWord(words[wordIndex]);
         this.view.setLevel(wordIndex + 1, words.length);
         this.view.playWordSound(1000);
@@ -152,5 +176,22 @@ public class LevelPresenter {
         Full,
         Repetition,
         End
+    }
+
+    private class InsertStatAsyncTask extends AsyncTask<Stat, Void, Void> {
+        private final StatRepository stats;
+
+        private InsertStatAsyncTask(StatRepository stats) {
+            this.stats = stats;
+        }
+
+        @Override
+        protected Void doInBackground(Stat... params) {
+            for (Stat stat : params) {
+                stats.insertStat(stat);
+            }
+
+            return null;
+        }
     }
 }

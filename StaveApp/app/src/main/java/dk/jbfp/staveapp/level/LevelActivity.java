@@ -29,6 +29,7 @@ import java.util.Map;
 
 import dk.jbfp.staveapp.Callback;
 import dk.jbfp.staveapp.R;
+import dk.jbfp.staveapp.data.Database;
 
 public class LevelActivity extends Activity implements LevelView {
     public static final String STEP_ID_KEY = "dk.jbfp.staveapp.STEP_ID";
@@ -132,7 +133,7 @@ public class LevelActivity extends Activity implements LevelView {
         int step = intent.getIntExtra(STEP_KEY, -1);
         String[] words = intent.getStringArrayExtra(WORDS_KEY);
 
-        this.presenter = new LevelPresenter(step, words);
+        this.presenter = new LevelPresenter(step, words, new Database(this));
         this.presenter.setView(this);
     }
 

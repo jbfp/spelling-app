@@ -1,7 +1,7 @@
 package dk.jbfp.staveapp;
 
 public class Stat {
-    public int id;
+    public long id;
     public String word;
     public boolean correct;
     public double time;
