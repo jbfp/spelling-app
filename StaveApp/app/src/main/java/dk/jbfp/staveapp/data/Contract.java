@@ -34,4 +34,20 @@ public final class Contract {
                         "REFERENCES " + User.TABLE_NAME +
                 ")";
     }
+
+    public static abstract class Stat implements BaseColumns {
+        public static final String TABLE_NAME = "stat";
+        public static final String COLUMN_WORD = "word";
+        public static final String COLUMN_CORRECT = "correct";
+        public static final String COLUMN_TIME = "time";
+        public static final String COLUMN_LISTENS = "listens";
+        public static final String CREATE =
+                "CREATE TABLE " + TABLE_NAME + " (" +
+                        Stat._ID + " INTEGER PRIMARY KEY NOT NULL," +
+                        COLUMN_WORD + " TEXT NOT NULL," +
+                        COLUMN_CORRECT + " INTEGER NOT NULL," +
+                        COLUMN_TIME + " REAL NOT NULL," +
+                        COLUMN_LISTENS + " INTEGER NOT NULL" +
+                ")";
+    }
 }
