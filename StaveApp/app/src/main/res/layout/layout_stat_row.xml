@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="30dp"
+        android:id="@+id/stat_word"
+        style="@android:style/TextAppearance.Material"
+        android:text="ny" />
+    <TextView
+        android:layout_width="100dp"
+        android:layout_gravity="right"
+        style="@android:style/TextAppearance.Material"
+        android:id="@+id/stat_correct"
+        android:text="23" />
+    <TextView
+        android:layout_width="100dp"
+        android:layout_gravity="right"
+        style="@android:style/TextAppearance.Material"
+        android:id="@+id/stat_incorrect" />
+    <TextView
+        android:layout_width="100dp"
+        android:layout_gravity="right"
+        style="@android:style/TextAppearance.Material"
+        android:id="@+id/stat_average_time" />
+    <TextView
+        android:layout_width="100dp"
+        android:layout_gravity="right"
+        style="@android:style/TextAppearance.Material"
+        android:id="@+id/stat_total_time" />
+    <TextView
+        android:layout_width="100dp"
+        android:layout_gravity="right"
+        style="@android:style/TextAppearance.Material"
+        android:id="@+id/stat_average_listens" />
+    <TextView
+        android:layout_width="100dp"
+        android:layout_gravity="right"
+        style="@android:style/TextAppearance.Material"
+        android:id="@+id/stat_total_listens" />
+</TableRow>

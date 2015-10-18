@@ -4,6 +4,6 @@ public class Stat {
     public long id;
     public String word;
     public boolean correct;
-    public double time;
+    public long time;
     public int listens;
 }

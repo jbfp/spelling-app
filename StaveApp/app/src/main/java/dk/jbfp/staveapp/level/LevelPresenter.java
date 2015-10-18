@@ -17,7 +17,7 @@ public class LevelPresenter {
     private LevelView view;
 
     // Stats.
-    private double startTime;
+    private long startTime;
     private int listens;
 
     public LevelPresenter(int step, String[] words, StatRepository stats) {

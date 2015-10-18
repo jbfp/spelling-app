@@ -177,7 +177,7 @@ public class Database extends SQLiteOpenHelper implements UserRepository, StepRe
             stat.id = c.getInt(0);
             stat.word = c.getString(1);
             stat.correct = c.getInt(2) == 1;
-            stat.time = c.getDouble(3);
+            stat.time = c.getLong(3);
             stat.listens = c.getInt(4);
             stats.add(stat);
         }

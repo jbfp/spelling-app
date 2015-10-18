@@ -142,6 +142,10 @@ public class StepsPresenter {
         new LoadStepsAsyncTask().execute();
     }
 
+    public void onStatsClicked() {
+        this.view.navigateToStatsActivity();
+    }
+
     private class LoadStepsAsyncTask extends AsyncTask<Void, Void, List<Step>> {
 
         @Override

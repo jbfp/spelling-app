@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import dk.jbfp.staveapp.R;
 import dk.jbfp.staveapp.User;
 import dk.jbfp.staveapp.data.Database;
 import dk.jbfp.staveapp.level.LevelActivity;
+import dk.jbfp.staveapp.stats.StatsActivity;
 import dk.jbfp.staveapp.steps.Step.StepState;
 
 public class StepsActivity extends Activity implements StepsView {
@@ -60,6 +63,13 @@ public class StepsActivity extends Activity implements StepsView {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_activity_steps, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home: {
@@ -67,10 +77,20 @@ public class StepsActivity extends Activity implements StepsView {
                 return true;
             }
 
+            case R.id.action_stats: {
+                this.presenter.onStatsClicked();
+                return true;
+            }
+
             default: {
                 return super.onOptionsItemSelected(item);
             }
         }
+    }
+
+    @Override
+    public void navigateToStatsActivity() {
+        startActivity(new Intent(this, StatsActivity.class));
     }
 
     @Override

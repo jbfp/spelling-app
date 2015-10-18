@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dk.jbfp.staveapp" >
 
     <uses-sdk android:minSdkVersion="21" />
@@ -20,9 +19,8 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-        <activity
-            android:name=".login.LoginActivity">
+        android:theme="@style/AppTheme" >
+        <activity android:name=".login.LoginActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,16 +30,21 @@
         <activity
             android:name=".register.RegisterActivity"
             android:label="@string/title_activity_register"
-            android:parentActivityName=".login.LoginActivity">
+            android:parentActivityName=".login.LoginActivity" >
         </activity>
         <activity
             android:name=".steps.StepsActivity"
             android:label="@string/title_activity_steps"
-            android:parentActivityName=".login.LoginActivity">
+            android:parentActivityName=".login.LoginActivity" >
         </activity>
         <activity
             android:name=".level.LevelActivity"
             android:label="@string/app_name"
+            android:parentActivityName=".steps.StepsActivity" >
+        </activity>
+        <activity
+            android:name=".stats.StatsActivity"
+            android:label="Statistik"
             android:parentActivityName=".steps.StepsActivity">
         </activity>
     </application>
