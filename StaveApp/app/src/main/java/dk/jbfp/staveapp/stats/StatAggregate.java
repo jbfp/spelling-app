@@ -28,6 +28,10 @@ public class StatAggregate {
         return this.word;
     }
 
+    public int getSamples() {
+        return this.samples;
+    }
+
     public int getCorrectAnswers() {
         return this.correctAnswers;
     }

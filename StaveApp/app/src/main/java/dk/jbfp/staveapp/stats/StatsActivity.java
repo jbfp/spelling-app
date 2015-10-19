@@ -9,12 +9,14 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.Collection;
+import java.util.Map;
 
 import dk.jbfp.staveapp.R;
 import dk.jbfp.staveapp.data.Database;
 
 public class StatsActivity extends Activity implements StatsView {
     private TableLayout table;
+    private TableLayout hof;
     private StatsPresenter presenter;
 
     @Override
@@ -22,6 +24,7 @@ public class StatsActivity extends Activity implements StatsView {
         setContentView(R.layout.activity_stats);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         this.table = (TableLayout) findViewById(R.id.stats_table);
+        this.hof = (TableLayout) findViewById(R.id.stats_hof_table);
         this.presenter = new StatsPresenter(new Database(this));
         super.onCreate(savedInstanceState);
     }
@@ -63,5 +66,19 @@ public class StatsActivity extends Activity implements StatsView {
         }
 
         table.requestLayout();
+    }
+
+    @Override
+    public void setHallOfFame(Map<String, String> map) {
+        for (String key : map.keySet()) {
+            String value = map.get(key);
+
+            TableRow row = (TableRow) LayoutInflater.from(this).inflate(R.layout.layout_stat_hof_row, null);
+            ((TextView) row.findViewById(R.id.stats_hof_key)).setText(key);
+            ((TextView) row.findViewById(R.id.stats_hof_value)).setText(value);
+            hof.addView(row);
+        }
+
+        hof.requestLayout();
     }
 }
