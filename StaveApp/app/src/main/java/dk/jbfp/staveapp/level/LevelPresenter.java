@@ -165,7 +165,7 @@ public class LevelPresenter {
     private void onNext() {
         // Reset stats.
         this.startTime = System.nanoTime();
-        this.listens = 0;
+        this.listens = 1;
 
         this.view.onNextWord(words[wordIndex]);
         this.view.setLevel(wordIndex + 1, words.length);
