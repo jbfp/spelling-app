@@ -4,25 +4,26 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.ArrayMap;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.NumberPicker;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ import dk.jbfp.staveapp.Callback;
 import dk.jbfp.staveapp.R;
 import dk.jbfp.staveapp.data.Database;
 
-public class LevelActivity extends Activity implements LevelView {
+public class LevelActivity extends Activity implements LevelView, OnEditorActionListener {
     public static final String STEP_ID_KEY = "dk.jbfp.staveapp.STEP_ID";
     public static final String STEP_KEY = "dk.jbfp.staveapp.STEP";
     public static final String WORDS_KEY = "dk.jbfp.staveapp.WORDS";
@@ -107,7 +108,7 @@ public class LevelActivity extends Activity implements LevelView {
         wordSounds = Collections.unmodifiableMap(map);
     }
 
-    private NumberPicker[] numberPickers;
+    private EditText answerEditText;
     private boolean isPlayingCombinedSounds;
     private boolean cancelAnswerSound;
 
@@ -125,6 +126,37 @@ public class LevelActivity extends Activity implements LevelView {
         setContentView(R.layout.activity_main);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
+        this.answerEditText = (EditText) findViewById(R.id.answer);
+        this.answerEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 0) {
+                    return;
+                }
+
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isPlayingCombinedSounds == false) {
+                            presenter.onAnswerChanged();
+                        }
+                    }
+                }, 1000);
+            }
+        });
+        this.answerEditText.setOnEditorActionListener(this);
+
         this.playIcon = ContextCompat.getDrawable(this, R.drawable.ic_play_circle_outline_black_48dp);
         this.stopIcon = ContextCompat.getDrawable(this, R.drawable.ic_stop_black_48dp);
 
@@ -137,100 +169,15 @@ public class LevelActivity extends Activity implements LevelView {
         this.presenter.setView(this);
     }
 
-    private void configureNumberPickers(final NumberPicker numberPicker) {
-        numberPicker.setMinValue(0);
-        numberPicker.setMaxValue(Alphabet.length - 1);
-        numberPicker.setDisplayedValues(Alphabet);
-        numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-
-        numberPicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isPlayingCombinedSounds == false) {
-                    presenter.onAnswerChanged();
-                }
-            }
-        });
-
-        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(final NumberPicker picker, final int oldVal, final int newVal) {
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (picker.getValue() == newVal) {
-                            if (isPlayingCombinedSounds == false) {
-                                presenter.onAnswerChanged();
-                            }
-                        }
-                    }
-                }, 1000);
-            }
-        });
-
-        // Text color.
-        final int count = numberPicker.getChildCount();
-        for(int i = 0; i < count; i++) {
-            View child = numberPicker.getChildAt(i);
-
-            if (child instanceof EditText) {
-                // Set text colors.
-                try {
-                    Field selectorWheelPaintField = numberPicker.getClass()
-                            .getDeclaredField("mSelectorWheelPaint");
-                    selectorWheelPaintField.setAccessible(true);
-                    ((Paint) selectorWheelPaintField.get(numberPicker)).setColor(Color.BLACK);
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-
-                // Set divider color.
-                try {
-                    Field selectionDividerField = numberPicker.getClass()
-                            .getDeclaredField("mSelectionDivider");
-                    selectionDividerField.setAccessible(true);
-                    ((Drawable) selectionDividerField.get(numberPicker)).setColorFilter(Color.BLACK, PorterDuff.Mode.SRC);
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-
-                // Set text color.
-                ((EditText) child).setTextColor(Color.BLACK);
-                numberPicker.invalidate();
-            }
-        }
-    }
-
     @Override
     public void onNextWord(Word next) {
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.NumberPickerLayout);
-        layout.removeAllViews();
-
         String word = next.getWord();
-        int wordLength = word.length();
-        numberPickers = new NumberPicker[wordLength];
-
-        for (int i = 0; i < wordLength; i++) {
-            NumberPicker numberPicker = new NumberPicker(this);
-            numberPicker.setId(View.generateViewId());
-            configureNumberPickers(numberPicker);
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT);
-
-            if (i > 0) {
-                lp.addRule(RelativeLayout.RIGHT_OF, numberPickers[i - 1].getId());
-            }
-
-            numberPickers[i] = numberPicker;
-            layout.addView(numberPicker, lp);
-        }
-
+        this.answerEditText.setText("");
+        this.answerEditText.setFilters(new InputFilter[]{
+                new InputFilter.AllCaps(),
+                new InputFilter.LengthFilter(word.length())
+        });
+        this.answerEditText.requestFocus();
         currentWordSoundId = wordSounds.get(word);
     }
 
@@ -301,12 +248,14 @@ public class LevelActivity extends Activity implements LevelView {
             return;
         }
 
-        if (index >= numberPickers.length) {
+        Editable value = answerEditText.getText();
+
+        if (index >= value.length()) {
             isPlayingCombinedSounds = false;
         } else {
             isPlayingCombinedSounds = true;
-            NumberPicker numberPicker = numberPickers[index];
-            int soundId = Sounds[numberPicker.getValue()];
+            int letterIndex = Character.toUpperCase(value.charAt(index)) - 65;
+            int soundId = Sounds[letterIndex];
             MediaPlayer.create(context, soundId)
                     .setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
@@ -327,14 +276,8 @@ public class LevelActivity extends Activity implements LevelView {
     }
 
     public void onSvarButtonClick(View view) throws Exception {
-        StringBuilder answer = new StringBuilder();
-
-        for (int i = 0; i < numberPickers.length; i++) {
-            answer.append(Alphabet[numberPickers[i].getValue()]);
-        }
-
         this.cancelAnswerSound = true;
-        presenter.onAnswerClicked(answer.toString());
+        presenter.onAnswerClicked(answerEditText.getText().toString());
     }
 
     @Override
@@ -422,5 +365,18 @@ public class LevelActivity extends Activity implements LevelView {
                 return super.onOptionsItemSelected(item);
             }
         }
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_NULL
+                && event.getAction() == KeyEvent.ACTION_DOWN) {
+            try {
+                onSvarButtonClick(v);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
     }
 }
